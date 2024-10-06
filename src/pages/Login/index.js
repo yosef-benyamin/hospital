@@ -1,14 +1,9 @@
 import {child, get, getDatabase, ref} from 'firebase/database';
 import React, {Component} from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 import {firebaseInit} from '../../config/firebaseInit';
+import {ButtonLarge} from '../../component/ButtonLarge';
+import {COLOR_BLUE} from '../../component/Constant';
 
 export default class Login extends Component {
   constructor(props) {
@@ -42,6 +37,7 @@ export default class Login extends Component {
       });
     } else {
       console.log('password belum ada');
+      this.props.navigation.navigate('TabScreen');
     }
   };
 
@@ -75,7 +71,7 @@ export default class Login extends Component {
     return (
       <View>
         <Image
-          source={require('../../../assets/login.jpeg')}
+          source={require('../../../assets/hospital.png')}
           style={styles.image}
         />
         <View style={styles.viewContent}>
@@ -94,9 +90,7 @@ export default class Login extends Component {
             onChangeText={value => this.onChangeText('password', value)}
             secureTextEntry
           />
-          <TouchableOpacity style={styles.buttonLogin} onPress={this.onLogin}>
-            <Text style={styles.textBtnSubmit}>Login</Text>
-          </TouchableOpacity>
+          <ButtonLarge onPress={this.onLogin} text={'Masuk'} />
         </View>
       </View>
     );
@@ -105,9 +99,10 @@ export default class Login extends Component {
 
 const styles = StyleSheet.create({
   image: {
-    width: '100%',
-    height: '50%',
-    objectFit: 'contain',
+    width: 380,
+    height: 380,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
   textTitle: {
     color: 'black',
@@ -127,7 +122,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   buttonLogin: {
-    backgroundColor: '#006FFD',
+    backgroundColor: COLOR_BLUE,
     padding: 6,
     borderRadius: 10,
     width: '100%',
