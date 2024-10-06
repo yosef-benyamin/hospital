@@ -1,130 +1,117 @@
 import React, {Component} from 'react';
-import {
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-} from 'react-native';
-import {child, get, getDatabase, ref, remove} from 'firebase/database';
-import {firebaseInit} from '../../config/firebaseInit';
+import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {Header} from '../../component/Header';
+import SmallCard from '../../component/SmallCard';
+import {ButtonLarge} from '../../component/ButtonLarge';
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allContact: {},
-      contactKey: [],
+      tab: 1,
+      expand: false,
     };
   }
 
-  componentDidMount = () => {
-    this.initApi();
+  handleContent = () => {
+    switch (this.state.tab) {
+      case 1:
+        return (
+          <View>
+            <Text style={styles.textBold}>Ruang Radiologi</Text>
+            <Text>Antonio (Dokter Jaga)</Text>
+            <Text>Fajar M (Operator Radiologi)</Text>
+            <Text>Fanny (Operator Radiologi)</Text>
+            <Text>Reza(Administrasi)</Text>
+          </View>
+        );
+      case 2:
+        return (
+          <View>
+            <TouchableOpacity style={styles.btnContent}>
+              <Text style={styles.textBold}>Ruang Radiologi</Text>
+              <SmallCard text={'Sesi 1'} color={'blue'} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btnContent}
+              onPress={() => this.setState({expand: !this.state.expand})}>
+              <View>
+                <Text style={styles.textBold}>Ruang Radiologi</Text>
+                {this.state.expand && (
+                  <View>
+                    <Text>Antonio (Dokter Jaga)</Text>
+                    <Text>Fajar M (Operator Radiologi)</Text>
+                    <Text>Fanny (Operator Radiologi)</Text>
+                    <Text>Reza(Administrasi)</Text>
+                  </View>
+                )}
+              </View>
+              <SmallCard text={'Sesi 2'} color={'blue'} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnContent}>
+              <Text style={styles.textBold}>Ruang Radiologi</Text>
+              <SmallCard text={'Sesi 3'} color={'blue'} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnContent}>
+              <Text style={styles.textBold}>Ruang Radiologi</Text>
+              <SmallCard text={'Sesi 4'} color={'blue'} />
+            </TouchableOpacity>
+          </View>
+        );
+      default:
+        break;
+    }
   };
 
-  initApi = () => {
-    const db = ref(getDatabase(firebaseInit));
-    get(child(db, 'Contact')).then(snapshot => {
-      if (snapshot.exists()) {
-        this.setState({
-          allContact: snapshot.val(),
-          contactKey: Object.keys(snapshot.val()),
-        });
-      } else {
-        console.log('No Data Available');
-      }
-    });
+  handleStyleActive = item => {
+    switch (this.state.tab === item) {
+      case true:
+        return styles.tabActive;
+      case false:
+        return styles.tabNonActive;
+    }
   };
 
-  handleDelete = contactKey => {
-    const db = getDatabase();
-    remove(ref(db, 'Contact/' + contactKey))
-      .then(() => {
-        Alert.alert('Info', 'Data berhasil terhapus permanen');
-        this.setState({
-          allContact: {},
-          contactKey: [],
-        });
-      })
-      .catch(error => console.log('Error :', error));
-    this.initApi();
-  };
-
-  handleAlertDelete = contactKey => {
-    console.log('HARD DELETE', contactKey);
-    Alert.alert(
-      'Perhatian',
-      'Data ini akan dihapus secara permanen. Apa kamu yakin?',
-      [
-        {text: 'Batal'},
-        {text: 'OK', onPress: () => this.handleDelete(contactKey)},
-      ],
+  handleRenderContent = () => {
+    return (
+      <View style={styles.viewContent}>
+        <TouchableOpacity
+          style={styles.btnTab}
+          onPress={() => this.setState({tab: 1})}>
+          <Text style={this.handleStyleActive(1)}>Jadwal Sesi 2</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btnTab}
+          onPress={() => this.setState({tab: 2})}>
+          <Text style={this.handleStyleActive(2)}>Jadwal Hari ini</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
-  handleRenderList = () => {
-    if (Object.keys(this.state.allContact).length > 0) {
-      console.log('masuk if', this.state.allContact);
-      return this.state.contactKey.map(item => {
-        const contact = {
-          idno: this.state.allContact[item].idno,
-          name: this.state.allContact[item].name,
-          phoneno: this.state.allContact[item].phoneno,
-        };
-        return (
-          <TouchableOpacity
-            key={item}
-            style={styles.buttonItem}
-            onPress={() =>
-              this.props.navigation.navigate('Add', {action: 'view', contact})
-            }>
-            <View>
-              <Text>{this.state.allContact[item].idno}</Text>
-              <Text>{this.state.allContact[item].name}</Text>
-              <Text>{this.state.allContact[item].phoneno}</Text>
-            </View>
-            <View style={styles.viewButton}>
-              <TouchableOpacity
-                style={styles.buttonEdit}
-                onPress={() =>
-                  this.props.navigation.navigate('Add', {
-                    contact,
-                    contactKey: item,
-                  })
-                }>
-                <Text>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.buttonDelete}
-                onPress={() => this.handleAlertDelete(item)}>
-                <Text>Hapus</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        );
-      });
-    } else {
-      console.log('masuk else');
-      return (
-        <View>
-          <Text style={styles.textNoData}>Belum ada data</Text>
-        </View>
-      );
-    }
+  handleLogin = () => {
+    this.props.navigation.navigate('Login');
   };
 
   render() {
     return (
       <View style={styles.viewContainer}>
-        <ScrollView>{this.handleRenderList()}</ScrollView>
-        <TouchableOpacity
-          style={styles.buttonAdd}
-          onPress={() =>
-            this.props.navigation.navigate('Add', {action: 'add'})
-          }>
-          <Text style={styles.textAdd}> + </Text>
-        </TouchableOpacity>
+        <Header />
+        <View style={styles.viewTopCard}>
+          <View>
+            <Text style={styles.textCardBold}>Kamis, 12 September 2024</Text>
+            <Text>22.30 WIB</Text>
+          </View>
+          <SmallCard text={'Sesi 2'} color={'black'} />
+        </View>
+        <View style={styles.viewWrapper}>
+          {this.handleRenderContent()}
+          <View style={styles.viewWrapperContent}>{this.handleContent()}</View>
+        </View>
+        {}
+        <View style={styles.viewButton}>
+          <ButtonLarge onPress={this.handleLogin} text={'Masuk'} />
+        </View>
       </View>
     );
   }
@@ -133,53 +120,73 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
   },
-  buttonAdd: {
-    flex: 1,
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    margin: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: 'darkblue',
-    borderRadius: 100,
+  viewTopCard: {
+    flexDirection: 'row',
+    width: '90%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FE',
+    borderRadius: 16,
+    padding: 16,
   },
-  textAdd: {
-    fontSize: 30,
+  textCardBold: {
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  viewContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    borderRadius: 16,
+    backgroundColor: '#F2F2F7',
+    marginBottom: 16,
+    padding: 4,
+  },
+  tabActive: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 10,
+    color: '#1F2024',
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+  },
+  tabNonActive: {
+    borderRadius: 16,
+    padding: 10,
+    color: '#71727A',
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+  },
+  btnTab: {
+    width: '50%',
+  },
+  viewWrapper: {
+    flex: 8,
+    width: '90%',
+    backgroundColor: '#F8F9FE',
+    margin: 16,
+    borderRadius: 16,
+  },
+  textBold: {
+    color: '#1F2024',
     fontWeight: 'bold',
   },
-  buttonItem: {
+  viewWrapperContent: {
+    paddingHorizontal: 20,
+  },
+  btnContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'white',
-    backgroundColor: 'darkblue',
-    padding: 10,
-    margin: 10,
-    borderRadius: 6,
+    marginVertical: 18,
   },
   viewButton: {
-    flexDirection: 'row',
-  },
-  buttonEdit: {
-    backgroundColor: 'green',
-    alignItems: 'center',
-    margin: 2,
-    padding: 4,
-    borderRadius: 3,
-  },
-  buttonDelete: {
-    backgroundColor: 'red',
-    alignItems: 'center',
-    margin: 2,
-    padding: 4,
-    borderRadius: 3,
-  },
-  textNoData: {
-    color: 'darkgrey',
-    textAlign: 'center',
-    margin: 30,
+    width: '90%',
+    marginVertical: 16,
   },
 });
