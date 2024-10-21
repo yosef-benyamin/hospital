@@ -1,66 +1,114 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import {Header} from '../../component/Header';
 import SmallCard from '../../component/SmallCard';
 import {ButtonLarge} from '../../component/ButtonLarge';
+import {child, get, getDatabase, ref} from 'firebase/database';
+import {firebaseInit} from '../../config/firebaseInit';
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tab: 1,
-      expand: false,
+      schedules: {},
+      shift: 'Malam',
     };
   }
 
+  componentDidMount = () => {
+    // Pagi: 00.00 - 08.00
+    // Siang: 08.00 - 16.00
+    // Malam: 16.00 - 00.00
+
+    const currentDate = new Date().toLocaleDateString('en-CA');
+
+    const db = ref(getDatabase(firebaseInit));
+    get(child(db, `schedules/${currentDate}`)).then(snapshot => {
+      if (snapshot.exists()) {
+        this.setState({schedules: snapshot.val()});
+      } else {
+        console.log('No Data Available');
+      }
+    });
+
+    this.handleCurrentDateTime();
+
+    setInterval(() => {
+      this.handleCurrentDateTime();
+      const now = new Date();
+
+      const currentHour = now.getHours();
+      let shift;
+
+      if (currentHour >= 0 && currentHour < 8) {
+        shift = 'Pagi';
+      } else if (currentHour >= 8 && currentHour < 16) {
+        shift = 'Siang';
+      } else {
+        shift = 'Malam';
+      }
+      this.setState({shift});
+    }, 1000);
+  };
+
+  handleCurrentDateTime = () => {
+    const currentDate = new Date().toLocaleString('id-ID', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const currentTime = new Date().toLocaleTimeString('id-ID');
+    this.setState({currentDate, currentTime});
+  };
+
   handleContent = () => {
-    switch (this.state.tab) {
-      case 1:
+    const {tab, schedules, shift} = this.state;
+
+    const renderEmployees = employees =>
+      Object.values(employees).map((val, index) => (
+        <Text style={styles.textVal} key={index}>
+          {val}
+        </Text>
+      ));
+
+    const renderRoom = (rooms, shifts) =>
+      Object.entries(shifts).map(([shiftName, employees]) => {
+        const key = `${rooms}-${shiftName}`;
+        const isExpanded = this.state[key];
+
+        if (tab === 1 && shiftName.toLowerCase() !== shift.toLowerCase()) {
+          return null;
+        }
+
         return (
-          <View>
-            <Text style={styles.textBold}>Ruang Radiologi</Text>
-            <Text>Antonio (Dokter Jaga)</Text>
-            <Text>Fajar M (Operator Radiologi)</Text>
-            <Text>Fanny (Operator Radiologi)</Text>
-            <Text>Reza(Administrasi)</Text>
-          </View>
+          <TouchableOpacity
+            key={key}
+            style={styles.btnContent}
+            onPress={() => this.toggleExpand(key)}>
+            <View>
+              <Text style={styles.textBold}>{rooms}</Text>
+              {(tab === 1 || isExpanded) && renderEmployees(employees)}
+            </View>
+            {tab === 2 && <SmallCard text={shiftName} color="blue" />}
+          </TouchableOpacity>
         );
-      case 2:
-        return (
-          <View>
-            <TouchableOpacity style={styles.btnContent}>
-              <Text style={styles.textBold}>Ruang Radiologi</Text>
-              <SmallCard text={'Sesi 1'} color={'blue'} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.btnContent}
-              onPress={() => this.setState({expand: !this.state.expand})}>
-              <View>
-                <Text style={styles.textBold}>Ruang Radiologi</Text>
-                {this.state.expand && (
-                  <View>
-                    <Text>Antonio (Dokter Jaga)</Text>
-                    <Text>Fajar M (Operator Radiologi)</Text>
-                    <Text>Fanny (Operator Radiologi)</Text>
-                    <Text>Reza(Administrasi)</Text>
-                  </View>
-                )}
-              </View>
-              <SmallCard text={'Sesi 2'} color={'blue'} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btnContent}>
-              <Text style={styles.textBold}>Ruang Radiologi</Text>
-              <SmallCard text={'Sesi 3'} color={'blue'} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btnContent}>
-              <Text style={styles.textBold}>Ruang Radiologi</Text>
-              <SmallCard text={'Sesi 4'} color={'blue'} />
-            </TouchableOpacity>
-          </View>
-        );
-      default:
-        break;
-    }
+      });
+
+    return Object.entries(schedules).flatMap(([rooms, shifts]) =>
+      renderRoom(rooms, shifts),
+    );
+  };
+
+  toggleExpand = key => {
+    this.setState(prevState => ({[key]: !prevState[key]}));
   };
 
   handleStyleActive = item => {
@@ -78,7 +126,9 @@ export default class Home extends Component {
         <TouchableOpacity
           style={styles.btnTab}
           onPress={() => this.setState({tab: 1})}>
-          <Text style={this.handleStyleActive(1)}>Jadwal Sesi 2</Text>
+          <Text style={this.handleStyleActive(1)}>
+            Jadwal {this.state.shift}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.btnTab}
@@ -99,16 +149,19 @@ export default class Home extends Component {
         <Header />
         <View style={styles.viewTopCard}>
           <View>
-            <Text style={styles.textCardBold}>Kamis, 12 September 2024</Text>
-            <Text>22.30 WIB</Text>
+            <Text style={styles.textCardBold}>{this.state.currentDate}</Text>
+            <Text style={styles.textDate}>{this.state.currentTime}</Text>
           </View>
-          <SmallCard text={'Sesi 2'} color={'black'} />
+          <SmallCard text={this.state.shift} color={'black'} />
         </View>
         <View style={styles.viewWrapper}>
           {this.handleRenderContent()}
-          <View style={styles.viewWrapperContent}>{this.handleContent()}</View>
+          <ScrollView
+            style={styles.viewWrapperContent}
+            showsVerticalScrollIndicator={false}>
+            {this.handleContent()}
+          </ScrollView>
         </View>
-        {}
         <View style={styles.viewButton}>
           <ButtonLarge onPress={this.handleLogin} text={'Masuk'} />
         </View>
@@ -188,5 +241,14 @@ const styles = StyleSheet.create({
   viewButton: {
     width: '90%',
     marginVertical: 16,
+  },
+  viewText: {
+    paddingVertical: 10,
+  },
+  textDate: {
+    color: 'grey',
+  },
+  textVal: {
+    color: 'grey',
   },
 });

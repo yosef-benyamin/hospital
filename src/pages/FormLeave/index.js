@@ -6,17 +6,103 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {Picker} from '@react-native-picker/picker';
+import {getEmployee, updateLeaveDB} from '../../utils';
+import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
+import {MMKV} from 'react-native-mmkv';
 
 export default class FormLeave extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      onLeave: 'annual',
+      dateLeave: new Date(),
+      reason: '',
+      address: '',
+      leader: 'dokter a',
+      head: 'kepala radiologi',
+      dayLeave: 1,
+      dayLeaveRemain: 0,
+      employee: {},
+      employeeKey: '',
+    };
   }
 
+  componentDidMount = async () => {
+    const storage = new MMKV();
+    const jsonUser = storage.getString('employee');
+    const employee = JSON.parse(jsonUser);
+    const employeeDB = await getEmployee(Object.values(employee)[0].id);
+
+    this.setState({
+      employee: Object.values(employeeDB.val())[0],
+      employeeKey: Object.keys(employee)[0],
+      dayLeaveRemain: Object.values(employeeDB.val())[0]?.leave?.annual,
+    });
+  };
+
+  handleSubmit = () => {
+    const {
+      onLeave,
+      dateLeave,
+      reason,
+      address,
+      leader,
+      head,
+      dayLeave,
+      dayLeaveRemain,
+      employee,
+      employeeKey,
+    } = this.state;
+
+    const date = dateLeave.toLocaleDateString('en-CA');
+
+    if (reason && address) {
+      const dataMerge = {
+        onLeave,
+        reason,
+        address,
+        leader,
+        head,
+        dayLeave,
+        name: employee.name,
+        department: employee.department,
+        dayLeaveRemain,
+        approval: 'waiting',
+      };
+      // updateEmployeeLeave(9, '2024-10-31', 'Cuti-Tahunan');
+      updateLeaveDB(employeeKey, date, dataMerge);
+      this.props.navigation.goBack();
+    } else {
+      Alert.alert(
+        'Perhatian',
+        'Alasan Cuti dan Alamat Selamat Cuti tidak boleh kosong',
+      );
+    }
+  };
+
+  onChangeDate = (event, dateLeave) => {
+    this.setState({dateLeave});
+  };
+
+  showDatepicker = () => {
+    DateTimePickerAndroid.open({
+      value: this.state.dateLeave,
+      onChange: this.onChangeDate,
+      mode: 'date',
+      minimumDate: new Date(),
+    });
+  };
+
+  onChangeText = (stateName, value) => {
+    this.setState({[stateName]: value});
+  };
+
   render() {
+    const {employee} = this.state;
     return (
       <View style={styles.viewContainer}>
         <Text style={styles.textTitleBold}>Pengajuan Cuti</Text>
@@ -26,17 +112,40 @@ export default class FormLeave extends Component {
           <Text style={styles.textSubTitle}>Jenis Cuti yang diambil</Text>
           <View style={styles.viewPicker}>
             <Picker
-              selectedValue={this.state.language}
+              selectedValue={this.state.onLeave}
               style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({language: itemValue})
+              onValueChange={itemValue =>
+                this.setState({
+                  onLeave: itemValue,
+                  dayLeaveRemain: employee?.leave[itemValue],
+                })
               }>
-              <Picker.Item label="Tahunan" value="tahunan" />
-              <Picker.Item label="Cuti Sakit" value="sakit" />
-              <Picker.Item label="Cuti Alasan Penting" value="penting" />
-              <Picker.Item label="Cuti Besar" value="besar" />
-              <Picker.Item label="Cuti Melahirkan" value="melahirkan" />
-              <Picker.Item label="Cuti di Luar Tanggungan" value="luar" />
+              <Picker.Item
+                label="Tahunan"
+                value="annual"
+                enabled={employee?.leave?.annual !== 0}
+              />
+              <Picker.Item label="Cuti Sakit" value="sick" />
+              <Picker.Item
+                label="Cuti Alasan Penting"
+                value="urgent"
+                enabled={employee?.leave?.urgent !== 0}
+              />
+              <Picker.Item
+                label="Cuti Besar"
+                value="holiday"
+                enabled={employee?.leave?.holiday !== 0}
+              />
+              <Picker.Item
+                label="Cuti Melahirkan"
+                value="maternity"
+                enabled={employee?.leave?.maternity !== 0}
+              />
+              <Picker.Item
+                label="Cuti di Luar Tanggungan"
+                value="unpaid"
+                enabled={employee?.leave?.unpaid !== 0}
+              />
             </Picker>
           </View>
           <Text style={styles.textSubTitle}>Sisa Cuti</Text>
@@ -50,40 +159,68 @@ export default class FormLeave extends Component {
               <Text style={styles.textSmall}>Cuti di Luar Tanggungan</Text>
             </View>
             <View>
-              <Text style={styles.textSmall}>12</Text>
-              <Text style={styles.textSmall}>30</Text>
-              <Text style={styles.textSmall}>1</Text>
-              <Text style={styles.textSmall}>3</Text>
-              <Text style={styles.textSmall}>2</Text>
-              <Text style={styles.textSmall}>1</Text>
+              <Text style={styles.textSmall}>{employee?.leave?.annual}</Text>
+              <Text style={styles.textSmall}>{employee?.leave?.sick}</Text>
+              <Text style={styles.textSmall}>{employee?.leave?.urgent}</Text>
+              <Text style={styles.textSmall}>{employee?.leave?.holiday}</Text>
+              <Text style={styles.textSmall}>{employee?.leave?.maternity}</Text>
+              <Text style={styles.textSmall}>{employee?.leave?.unpaid}</Text>
             </View>
           </View>
           <Text style={styles.textSubTitle}>Tanggal Cuti</Text>
-          <TextInput style={styles.textInput} value="16 September 2024" />
+          <TouchableOpacity onPress={this.showDatepicker}>
+            <TextInput
+              style={styles.textInput}
+              value={this.state.dateLeave.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+              editable={false}
+            />
+          </TouchableOpacity>
           <Text style={styles.textSubTitle}>Alasan Cuti</Text>
           <TextInput
             style={styles.textInput}
-            value="Liburan bersama keluarga"
+            value={this.state.reason}
+            onChangeText={value => this.onChangeText('reason', value)}
           />
           <View style={styles.viewDayLeave}>
             <Text style={styles.textSubTitle}>Lama Cuti (Hari)</Text>
-            <TouchableOpacity style={styles.smallBtn}>
-              <Text>-</Text>
+            <TouchableOpacity
+              style={styles.smallBtn}
+              onPress={() =>
+                this.setState(prevState => ({
+                  dayLeave:
+                    prevState.dayLeave === 1
+                      ? prevState.dayLeave
+                      : prevState.dayLeave - 1,
+                }))
+              }>
+              <Text style={styles.textBlack}>-</Text>
             </TouchableOpacity>
-            <Text>1</Text>
-            <TouchableOpacity style={styles.smallBtn}>
-              <Text>+</Text>
+            <Text style={styles.textBlack}>{this.state.dayLeave}</Text>
+            <TouchableOpacity
+              style={styles.smallBtn}
+              onPress={() =>
+                this.setState(prevState => ({dayLeave: prevState.dayLeave + 1}))
+              }>
+              <Text style={styles.textBlack}>+</Text>
             </TouchableOpacity>
           </View>
           <Text style={styles.textSubTitle}>Alamat Selama Cuti</Text>
-          <TextInput style={styles.textInput} value="Dago - Bandung" />
+          <TextInput
+            style={styles.textInput}
+            value={this.state.address}
+            onChangeText={value => this.onChangeText('address', value)}
+          />
           <Text style={styles.textSubTitle}>Pertimbangan atasan langsung</Text>
           <View style={styles.viewPicker}>
             <Picker
-              selectedValue={this.state.language}
+              selectedValue={this.state.leader}
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) =>
-                this.setState({language: itemValue})
+                this.setState({leader: itemValue})
               }>
               <Picker.Item label="Dokter A" value="dokter a" />
             </Picker>
@@ -93,15 +230,15 @@ export default class FormLeave extends Component {
           </Text>
           <View style={styles.viewPicker}>
             <Picker
-              selectedValue={this.state.language}
+              selectedValue={this.state.head}
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) =>
-                this.setState({language: itemValue})
+                this.setState({head: itemValue})
               }>
               <Picker.Item label="Kepala Radiologi" value="kepala radiologi" />
             </Picker>
           </View>
-          <ButtonLarge text={'Ajukan'} />
+          <ButtonLarge text={'Ajukan'} onPress={this.handleSubmit} />
         </ScrollView>
       </View>
     );
@@ -127,6 +264,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   textInput: {
+    color: 'black',
     borderWidth: 1,
     marginVertical: 10,
     paddingHorizontal: 20,
@@ -156,6 +294,7 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     width: '100%',
+    color: 'black',
   },
   viewTextSmall: {
     flexDirection: 'row',
@@ -166,5 +305,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 16,
     justifyContent: 'space-between',
+  },
+  textBlack: {
+    color: 'black',
   },
 });

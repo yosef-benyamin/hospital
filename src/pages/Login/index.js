@@ -1,75 +1,70 @@
-import {child, get, getDatabase, ref} from 'firebase/database';
+import {getDatabase, ref} from 'firebase/database';
 import React, {Component} from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import {firebaseInit} from '../../config/firebaseInit';
 import {ButtonLarge} from '../../component/ButtonLarge';
-import {COLOR_BLUE} from '../../component/Constant';
+import {MMKV} from 'react-native-mmkv';
+import {getEmployee} from '../../utils';
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       idno: '',
-      name: '',
       password: '',
-      confirmPassword: '',
     };
   }
 
-  onLogin = () => {
-    if (this.state.password !== '' && this.state.confirmPassword === '') {
-      const db = ref(getDatabase(firebaseInit));
-      get(child(db, 'Contact')).then(snapshot => {
-        if (snapshot.exists()) {
-          snapshot.forEach(item => {
-            if (item.val().idno === this.state.idno) {
-              if (item.val().password === this.state.password) {
-                return console.log('password benar');
-              } else {
-                return console.log('password salah');
-              }
-            } else {
-            }
-          });
-        } else {
-          console.log('No Data Available');
-        }
-      });
-    } else {
-      console.log('password belum ada');
-      this.props.navigation.navigate('TabScreen');
-    }
+  componentDidMount = () => {
+    ref(getDatabase(firebaseInit));
   };
 
-  initApi = () => {
-    const db = ref(getDatabase(firebaseInit));
-    get(child(db, 'Contact')).then(snapshot => {
+  onLogin = async () => {
+    const storage = new MMKV();
+    const {idno, password} = this.state;
+    if (idno !== '' && password !== '') {
+      const snapshot = await getEmployee(idno);
       if (snapshot.exists()) {
-        snapshot.forEach(item => {
-          if (item.val().password && item.val().idno === this.state.idno) {
-            console.log('ada passwordnya');
+        if (Object.values(snapshot.val())[0].password === password) {
+          storage.set('employee', JSON.stringify(snapshot.val()));
+          if (Object.values(snapshot.val())[0].role === 'admin') {
+            this.props.navigation.navigate('TabAdmin', {
+              screen: 'TabHome',
+              params: Object.values(snapshot.val())[0],
+            });
           } else {
-            console.log('tidak ada passwordnya');
+            this.props.navigation.navigate('TabScreen', {
+              screen: 'TabHome',
+              params: Object.values(snapshot.val())[0],
+            });
           }
-        });
+        } else {
+          Alert.alert('ID atau Password salah');
+        }
       } else {
+        Alert.alert('ID atau Password salah');
         console.log('No Data Available');
       }
-    });
+    } else {
+      console.log('password belum ada');
+    }
   };
 
   onChangeText = (stateName, value) => {
     this.setState({[stateName]: value});
   };
 
-  onBlur = value => {
-    console.log('value', this.state.idno);
-    this.initApi();
-  };
-
   render() {
     return (
-      <View>
+      <ScrollView>
         <Image
           source={require('../../../assets/hospital.png')}
           style={styles.image}
@@ -81,7 +76,6 @@ export default class Login extends Component {
             placeholder="NIP"
             placeholderTextColor="grey"
             onChangeText={value => this.onChangeText('idno', value)}
-            onBlur={() => this.onBlur()}
           />
           <TextInput
             style={styles.textLogin}
@@ -92,7 +86,7 @@ export default class Login extends Component {
           />
           <ButtonLarge onPress={this.onLogin} text={'Masuk'} />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -120,18 +114,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     width: '100%',
     color: 'black',
-  },
-  buttonLogin: {
-    backgroundColor: COLOR_BLUE,
-    padding: 6,
-    borderRadius: 10,
-    width: '100%',
-    marginVertical: 14,
-  },
-  textBtnSubmit: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 12,
-    padding: 10,
   },
 });

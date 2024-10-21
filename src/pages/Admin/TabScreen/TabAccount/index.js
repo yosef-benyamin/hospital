@@ -1,36 +1,47 @@
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, TouchableOpacity, Image} from 'react-native';
-import {ModalConfirm} from '../../../component/ModalConfirm';
+import {ModalConfirm} from '../../../../component/ModalConfirm';
+import {MMKV} from 'react-native-mmkv';
 
 export default class TabAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showModal: false,
+      employee: {},
     };
   }
+
+  componentDidMount = () => {
+    const storage = new MMKV();
+    const jsonUser = storage.getString('employee');
+    const employee = JSON.parse(jsonUser);
+
+    this.setState({employee});
+  };
 
   logout = () => {
     this.setState({showModal: true});
   };
 
   handleRender = () => {
+    const {employee} = this.state;
     return (
       <View style={styles.viewRender}>
         <Image
-          source={require('../../../../assets/avatar.png')}
+          source={require('../../../../../assets/avatar.png')}
           style={styles.image}
         />
         <View style={styles.wrapperText}>
-          <Text style={styles.textHugeCenter}>Dian Sastro</Text>
-          <Text style={styles.textSmall}>Dokter Anak</Text>
+          <Text style={styles.textHugeCenter}>{employee.name}</Text>
+          <Text style={styles.textSmall}>{employee.department}</Text>
         </View>
         <TouchableOpacity style={styles.btnWrapper}>
           <Text style={styles.textBlack}>Ganti Password</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnWrapper}>
-          <Text style={styles.textBlack}>Ubah Jadwal</Text>
+          <Text style={styles.textBlack}>Buat Ulang Jadwal Bulan Depan</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnWrapper} onPress={this.logout}>
@@ -48,6 +59,8 @@ export default class TabAccount extends Component {
         {this.handleRender()}
         <ModalConfirm
           visible={this.state.showModal}
+          title={'Keluar'}
+          subtitle={'Apa anda yakin ingin keluar?'}
           negativeButton={() => this.setState({showModal: false})}
           positiveButton={() => this.props.navigation.popToTop()}
         />

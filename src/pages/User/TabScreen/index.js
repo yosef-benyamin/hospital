@@ -4,7 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import TabHome from './TabHome';
 import TabLeave from './TabLeave';
 import TabAccount from './TabAccount';
-import {COLOR_BLUE} from '../../component/Constant';
+import {COLOR_BLUE} from '../../../component/Constant';
 
 const Tab = createBottomTabNavigator();
 
