@@ -50,10 +50,14 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     paddingHorizontal: 16,
     paddingVertical: 10,
+    width: '25%',
   },
   textCardBold: {
     fontWeight: 'bold',
     color: '#000000',
+    textTransform: 'capitalize',
+    textAlign: 'center',
+    fontSize: 11,
   },
 });
 

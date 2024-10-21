@@ -4,8 +4,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Add from '../pages/Add';
 import Login from '../pages/Login';
 import LandingPage from '../pages/LandingPage';
-import {TabScreen} from '../pages/TabScreen';
+import {TabScreen} from '../pages/User/TabScreen';
 import FormLeave from '../pages/FormLeave';
+import {TabAdmin} from '../pages/Admin/TabScreen';
+import FormApproval from '../pages/FormApproval';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,8 +36,18 @@ const Router = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="TabAdmin"
+        component={TabAdmin}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="FormLeave"
         component={FormLeave}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FormApproval"
+        component={FormApproval}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

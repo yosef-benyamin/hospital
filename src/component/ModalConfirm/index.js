@@ -8,6 +8,8 @@ export const ModalConfirm = ({
   visible,
   negativeButton,
   positiveButton,
+  title,
+  subtitle,
 }) => {
   return (
     <Modal
@@ -16,8 +18,8 @@ export const ModalConfirm = ({
       visible={visible}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>Keluar</Text>
-          <Text style={styles.modalDesc}>Apa anda yakin ingin keluar?</Text>
+          <Text style={styles.modalText}>{title}</Text>
+          <Text style={styles.modalDesc}>{subtitle}</Text>
           <View style={styles.viewButton}>
             <ButtonLarge
               styleButton={styles.button}
@@ -26,7 +28,7 @@ export const ModalConfirm = ({
             />
             <ButtonLarge
               styleButton={styles.button}
-              text={'Keluar'}
+              text={'Oke'}
               onPress={positiveButton}
             />
           </View>
@@ -57,6 +59,7 @@ const styles = StyleSheet.create({
   },
   modalDesc: {
     margin: 10,
+    color: 'grey',
   },
   viewButton: {
     flexDirection: 'row',
