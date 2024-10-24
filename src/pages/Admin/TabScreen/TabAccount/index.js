@@ -15,13 +15,17 @@ export default class TabAccount extends Component {
   componentDidMount = () => {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
-    const employee = JSON.parse(jsonUser);
+    const employee = Object.values(JSON.parse(jsonUser))[0];
 
     this.setState({employee});
   };
 
   logout = () => {
     this.setState({showModal: true});
+  };
+
+  changePass = () => {
+    this.props.navigation.navigate('ChangePassword');
   };
 
   handleRender = () => {
@@ -36,7 +40,7 @@ export default class TabAccount extends Component {
           <Text style={styles.textHugeCenter}>{employee.name}</Text>
           <Text style={styles.textSmall}>{employee.department}</Text>
         </View>
-        <TouchableOpacity style={styles.btnWrapper}>
+        <TouchableOpacity style={styles.btnWrapper} onPress={this.changePass}>
           <Text style={styles.textBlack}>Ganti Password</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>

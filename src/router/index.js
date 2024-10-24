@@ -8,6 +8,7 @@ import {TabScreen} from '../pages/User/TabScreen';
 import FormLeave from '../pages/FormLeave';
 import {TabAdmin} from '../pages/Admin/TabScreen';
 import FormApproval from '../pages/FormApproval';
+import ChangePassword from '../pages/ChangePassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,11 @@ const Router = () => {
       <Stack.Screen
         name="FormApproval"
         component={FormApproval}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePassword}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

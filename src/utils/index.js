@@ -186,6 +186,18 @@ export function updateEmployeeLeave(employeeId, date, shift) {
 }
 
 // Fungsi untuk memperbarui cuti karyawan berdasarkan jadwal bulanan
+export function updatePassword(employeeId, pass) {
+  const db = getDatabase();
+  const updates = {};
+
+  // Update shift karyawan untuk tanggal tertentu
+  updates[`employees/${employeeId}/password`] = pass;
+
+  // Melakukan update ke database
+  return update(ref(db), updates);
+}
+
+// Fungsi untuk memperbarui cuti karyawan berdasarkan jadwal bulanan
 export function updateLeaveDB(employeeId, date, dataLeave) {
   const db = getDatabase();
   const scheduleRef = ref(db, `leaves/${date}/${employeeId}`);
