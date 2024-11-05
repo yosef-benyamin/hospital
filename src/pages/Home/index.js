@@ -94,7 +94,7 @@ export default class Home extends Component {
             .filter(([key]) => key === shift.toLowerCase() || tab === 2)
             .map(([key, employee]) => {
               return (
-                <View style={styles.btnContent}>
+                <View key={`${val.day}-${key}`} style={styles.btnContent}>
                   <View>
                     {Object.entries(employee).map(([id, emp]) => {
                       return (
