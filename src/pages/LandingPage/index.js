@@ -1,9 +1,13 @@
 import React, {Component} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
-import {child, get, getDatabase, ref} from 'firebase/database';
-import {firebaseInit} from '../../config/firebaseInit';
-import {resetLeave} from '../../utils';
+import {db} from '../../config/firebaseInit';
+import {collection, getDocs} from 'firebase/firestore';
+import {
+  devBackup,
+  resetLeave,
+  uploadMockDataToFirestore,
+} from '../../firestore/LandingPage';
 
 export default class LandingPage extends Component {
   constructor(props) {
@@ -12,22 +16,19 @@ export default class LandingPage extends Component {
   }
 
   componentDidMount = async () => {
-    const db = ref(getDatabase(firebaseInit));
-
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
     if (today.getFullYear() !== yesterday.getFullYear()) {
-      get(child(db, 'employees')).then(async snapshot => {
-        if (snapshot.exists()) {
-          await resetLeave(snapshot.val())
-            .then(() => console.log('Proses selesai'))
-            .catch(error => console.error('Terjadi kesalahan:', error));
-        } else {
-          console.log('No Data Available');
-        }
-      });
+      const querySnapshot = await getDocs(collection(db, 'employees'));
+
+      try {
+        await resetLeave(querySnapshot);
+        console.log('Successfully reset leave data');
+      } catch (error) {
+        console.error('Failed to reset leave data:', error);
+      }
     }
   };
 
@@ -37,6 +38,18 @@ export default class LandingPage extends Component {
 
   handleHome = () => {
     this.props.navigation.navigate('Home');
+  };
+
+  handleMock = () => {
+    // this.props.navigation.navigate('Home');
+    console.log('mock data');
+    uploadMockDataToFirestore();
+  };
+
+  handleBackup = () => {
+    // this.props.navigation.navigate('Home');
+    console.log('backup data');
+    devBackup();
   };
 
   render() {
@@ -52,6 +65,8 @@ export default class LandingPage extends Component {
           </Text>
           <ButtonLarge onPress={this.handleLogin} text={'Login'} />
           <ButtonLarge onPress={this.handleHome} text={'Beranda'} />
+          {/* <ButtonLarge onPress={this.handleMock} text={'Mocking Data'} /> */}
+          {/* <ButtonLarge onPress={this.handleBackup} text={'Backup to console'} /> */}
         </View>
       </View>
     );
