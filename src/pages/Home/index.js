@@ -5,12 +5,13 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import {Header} from '../../component/Header';
 import SmallCard from '../../component/SmallCard';
 import {ButtonLarge} from '../../component/ButtonLarge';
-import {child, get, getDatabase, ref} from 'firebase/database';
-import {firebaseInit} from '../../config/firebaseInit';
+import {getSchedules} from '../../firestore/Spv/TabHome';
+import {ButtonSmall} from '../../component/ButtonSmall';
 
 export default class Home extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ export default class Home extends Component {
       tab: 1,
       schedules: {},
       shift: 'Malam',
+      filter: 'ICU',
     };
   }
 
@@ -27,17 +29,7 @@ export default class Home extends Component {
     // Siang: 08.00 - 16.00
     // Malam: 16.00 - 00.00
 
-    const currentDate = new Date().toLocaleDateString('en-CA');
-
-    const db = ref(getDatabase(firebaseInit));
-    get(child(db, `schedules/${currentDate}`)).then(snapshot => {
-      if (snapshot.exists()) {
-        this.setState({schedules: snapshot.val()});
-      } else {
-        console.log('No Data Available');
-      }
-    });
-
+    this.initApi(this.state.filter);
     this.handleCurrentDateTime();
 
     setInterval(() => {
@@ -58,6 +50,16 @@ export default class Home extends Component {
     }, 1000);
   };
 
+  initApi = async filter => {
+    const currentDate = new Date().toLocaleDateString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+    });
+    const schedules = await getSchedules(filter, currentDate);
+
+    this.setState({schedules});
+  };
+
   handleCurrentDateTime = () => {
     const currentDate = new Date().toLocaleString('id-ID', {
       weekday: 'long',
@@ -69,46 +71,47 @@ export default class Home extends Component {
     this.setState({currentDate, currentTime});
   };
 
-  handleContent = () => {
-    const {tab, schedules, shift} = this.state;
-
-    const renderEmployees = employees =>
-      Object.values(employees).map((val, index) => (
-        <Text style={styles.textVal} key={index}>
-          {val}
-        </Text>
-      ));
-
-    const renderRoom = (rooms, shifts) =>
-      Object.entries(shifts).map(([shiftName, employees]) => {
-        const key = `${rooms}-${shiftName}`;
-        const isExpanded = this.state[key];
-
-        if (tab === 1 && shiftName.toLowerCase() !== shift.toLowerCase()) {
-          return null;
-        }
-
-        return (
-          <TouchableOpacity
-            key={key}
-            style={styles.btnContent}
-            onPress={() => this.toggleExpand(key)}>
-            <View>
-              <Text style={styles.textBold}>{rooms}</Text>
-              {(tab === 1 || isExpanded) && renderEmployees(employees)}
-            </View>
-            {tab === 2 && <SmallCard text={shiftName} color="blue" />}
-          </TouchableOpacity>
-        );
-      });
-
-    return Object.entries(schedules).flatMap(([rooms, shifts]) =>
-      renderRoom(rooms, shifts),
+  handleRenderNoData = () => {
+    return (
+      <View style={styles.viewMiddle}>
+        <Image
+          source={require('../../../assets/noData.png')}
+          style={styles.image}
+        />
+        <Text style={styles.textHugeCenter}>Belum ada jadwal</Text>
+      </View>
     );
   };
 
-  toggleExpand = key => {
-    this.setState(prevState => ({[key]: !prevState[key]}));
+  handleContent = () => {
+    const {tab, schedules, shift} = this.state;
+
+    if (schedules) {
+      return Object.values(schedules)
+        .filter(val => val.day === new Date().getDate())
+        .map(val => {
+          return Object.entries(val.shift)
+            .filter(([key]) => key === shift.toLowerCase() || tab === 2)
+            .map(([key, employee]) => {
+              return (
+                <View style={styles.btnContent}>
+                  <View>
+                    {Object.entries(employee).map(([id, emp]) => {
+                      return (
+                        <Text style={styles.textVal} key={id}>
+                          {emp}
+                        </Text>
+                      );
+                    })}
+                  </View>
+                  {tab === 2 && <SmallCard text={key} color="blue" />}
+                </View>
+              );
+            });
+        });
+    } else {
+      return this.handleRenderNoData();
+    }
   };
 
   handleStyleActive = item => {
@@ -143,6 +146,41 @@ export default class Home extends Component {
     this.props.navigation.navigate('Login');
   };
 
+  handleButtonFilter = filter => {
+    this.initApi(filter);
+    this.setState({filter});
+  };
+
+  handleDepartment = () => {
+    const {filter} = this.state;
+    return (
+      <View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ButtonSmall
+            text={'ICU'}
+            active={filter === 'ICU'}
+            onPress={() => this.handleButtonFilter('ICU')}
+          />
+          <ButtonSmall
+            text={'Radiologi'}
+            active={filter === 'Radiologi'}
+            onPress={() => this.handleButtonFilter('Radiologi')}
+          />
+          <ButtonSmall
+            text={'UGD'}
+            active={filter === 'UGD'}
+            onPress={() => this.handleButtonFilter('UGD')}
+          />
+          <ButtonSmall
+            text={'Rehabilitasi'}
+            active={filter === 'Rehabilitasi'}
+            onPress={() => this.handleButtonFilter('Rehabilitasi')}
+          />
+        </ScrollView>
+      </View>
+    );
+  };
+
   render() {
     return (
       <View style={styles.viewContainer}>
@@ -156,6 +194,7 @@ export default class Home extends Component {
         </View>
         <View style={styles.viewWrapper}>
           {this.handleRenderContent()}
+          {this.handleDepartment()}
           <ScrollView
             style={styles.viewWrapperContent}
             showsVerticalScrollIndicator={false}>
@@ -225,10 +264,6 @@ const styles = StyleSheet.create({
     margin: 16,
     borderRadius: 16,
   },
-  textBold: {
-    color: '#1F2024',
-    fontWeight: 'bold',
-  },
   viewWrapperContent: {
     paddingHorizontal: 20,
   },
@@ -242,13 +277,26 @@ const styles = StyleSheet.create({
     width: '90%',
     marginVertical: 16,
   },
-  viewText: {
-    paddingVertical: 10,
-  },
   textDate: {
     color: 'grey',
   },
   textVal: {
     color: 'grey',
+  },
+  viewMiddle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 400,
+  },
+  image: {
+    width: 100,
+    height: 100,
+  },
+  textHugeCenter: {
+    fontWeight: 'bold',
+    color: '#000000',
+    fontSize: 20,
+    textAlign: 'center',
+    padding: 20,
   },
 });
