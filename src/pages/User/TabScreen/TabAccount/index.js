@@ -15,7 +15,7 @@ export default class TabAccount extends Component {
   componentDidMount = () => {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
-    const employee = Object.values(JSON.parse(jsonUser))[0];
+    const employee = JSON.parse(jsonUser);
 
     this.setState({employee});
   };
@@ -26,6 +26,10 @@ export default class TabAccount extends Component {
 
   changePass = () => {
     this.props.navigation.navigate('ChangePassword');
+  };
+
+  changeShift = () => {
+    this.props.navigation.navigate('ChangeShift');
   };
 
   handleRender = () => {
@@ -44,7 +48,7 @@ export default class TabAccount extends Component {
           <Text style={styles.textBlack}>Ganti Password</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnWrapper}>
+        <TouchableOpacity style={styles.btnWrapper} onPress={this.changeShift}>
           <Text style={styles.textBlack}>Ubah Jadwal</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>
