@@ -15,7 +15,7 @@ export default class TabAccount extends Component {
   componentDidMount = () => {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
-    const employee = Object.values(JSON.parse(jsonUser))[0];
+    const employee = JSON.parse(jsonUser);
 
     this.setState({employee});
   };
