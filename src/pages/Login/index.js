@@ -1,4 +1,3 @@
-import {getDatabase, ref} from 'firebase/database';
 import React, {Component} from 'react';
 import {
   Alert,
@@ -9,10 +8,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {firebaseInit} from '../../config/firebaseInit';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {MMKV} from 'react-native-mmkv';
-import {getEmployee} from '../../utils';
+import {getEmployeeByIDPass} from '../../firestore/Login';
 
 export default class Login extends Component {
   constructor(props) {
@@ -23,35 +21,30 @@ export default class Login extends Component {
     };
   }
 
-  componentDidMount = () => {
-    ref(getDatabase(firebaseInit));
-  };
-
   onLogin = async () => {
     const storage = new MMKV();
+    let employee = {};
     const {idno, password} = this.state;
     if (idno !== '' && password !== '') {
-      const snapshot = await getEmployee(idno);
-      if (snapshot.exists()) {
-        if (Object.values(snapshot.val())[0].password === password) {
-          storage.set('employee', JSON.stringify(snapshot.val()));
-          if (Object.values(snapshot.val())[0].role === 'admin') {
-            this.props.navigation.navigate('TabAdmin', {
-              screen: 'TabHome',
-              params: Object.values(snapshot.val())[0],
-            });
-          } else {
-            this.props.navigation.navigate('TabScreen', {
-              screen: 'TabHome',
-              params: Object.values(snapshot.val())[0],
-            });
-          }
+      const employees = await getEmployeeByIDPass(idno, password);
+      employees.forEach(emp => {
+        employee = {...emp.data(), ...{key: emp.id}};
+      });
+      if (Object.keys(employee).length) {
+        storage.set('employee', JSON.stringify(employee));
+        if (employee.role === 'spv') {
+          this.props.navigation.navigate('TabAdmin', {
+            screen: 'TabHome',
+            params: employee,
+          });
         } else {
-          Alert.alert('ID atau Password salah');
+          this.props.navigation.navigate('TabScreen', {
+            screen: 'TabHome',
+            params: employee,
+          });
         }
       } else {
         Alert.alert('ID atau Password salah');
-        console.log('No Data Available');
       }
     } else {
       console.log('password belum ada');
