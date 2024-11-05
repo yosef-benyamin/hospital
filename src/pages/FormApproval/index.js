@@ -3,13 +3,12 @@ import {Text, StyleSheet, View, Modal, TextInput, Alert} from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {COLOR_RED} from '../../component/Constant';
 import {ModalConfirm} from '../../component/ModalConfirm';
-import {approveLeaveEmp, updateLeaveDB} from '../../utils';
+import {approveLeaveEmp, updateLeave} from '../../firestore/FormLeave';
 
 export default class FormApproval extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dateLeave: new Date(),
       reason: '',
       address: '',
       leader: 'dokter a',
@@ -75,6 +74,7 @@ export default class FormApproval extends Component {
       dayLeaveRemain,
       approval,
       department,
+      employeeKey,
     } = this.state.employee;
 
     const {reasonReject} = this.state;
@@ -94,15 +94,17 @@ export default class FormApproval extends Component {
       leader,
       head,
       dayLeave,
-      dayLeaveRemain,
       name,
+      department,
+      dayLeaveRemain,
       approval: approve,
       reasonReject,
-      department,
+      employeeKey,
+      date,
     };
     try {
-      updateLeaveDB(id, date, dataMerge);
-      approveLeaveEmp(id, onLeave, dayLeave, dayLeaveRemain, approve);
+      updateLeave(id, dataMerge);
+      approveLeaveEmp(employeeKey, onLeave, dayLeave, dayLeaveRemain, approve);
     } catch (error) {
       console.log('Error:', error);
       throw error;
@@ -232,41 +234,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     width: '100%',
   },
-  smallBtn: {
-    backgroundColor: '#EAF2FF',
-    borderRadius: 26,
-    width: 26,
-    height: 26,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  viewPicker: {
-    width: '100%',
-    borderWidth: 1,
-    borderRadius: 12,
-    marginVertical: 10,
-  },
-  textSmall: {
-    color: 'black',
-    fontSize: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 2,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-    color: 'black',
-  },
-  viewTextSmall: {
-    flexDirection: 'row',
-    padding: 10,
-  },
-  viewDayLeave: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-    justifyContent: 'space-between',
-  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -278,15 +245,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
-  },
-  modalText: {
-    textAlign: 'center',
-    fontWeight: '900',
-    color: 'black',
-  },
-  modalDesc: {
-    margin: 10,
-    color: 'grey',
   },
   viewButton: {
     flexDirection: 'row',
