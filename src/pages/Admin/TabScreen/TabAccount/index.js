@@ -28,6 +28,11 @@ export default class TabAccount extends Component {
     this.props.navigation.navigate('ChangePassword');
   };
 
+  changeShift = () => {
+    console.log('changeshift');
+    this.props.navigation.navigate('ApproveChangeShift');
+  };
+
   handleRender = () => {
     const {employee} = this.state;
     return (
@@ -44,8 +49,8 @@ export default class TabAccount extends Component {
           <Text style={styles.textBlack}>Ganti Password</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnWrapper}>
-          <Text style={styles.textBlack}>Buat Ulang Jadwal Bulan Depan</Text>
+        <TouchableOpacity style={styles.btnWrapper} onPress={this.changeShift}>
+          <Text style={styles.textBlack}>Setujui Ubah Jadwal</Text>
           <Text style={styles.textBlack}>&gt;</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnWrapper} onPress={this.logout}>

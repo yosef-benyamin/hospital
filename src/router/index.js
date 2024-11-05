@@ -9,6 +9,8 @@ import FormLeave from '../pages/FormLeave';
 import {TabAdmin} from '../pages/Admin/TabScreen';
 import FormApproval from '../pages/FormApproval';
 import ChangePassword from '../pages/ChangePassword';
+import ChangeShift from '../pages/ChangeShift';
+import ApproveChangeShift from '../pages/ApproveChangeShift';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +56,16 @@ const Router = () => {
       <Stack.Screen
         name="ChangePassword"
         component={ChangePassword}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ChangeShift"
+        component={ChangeShift}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ApproveChangeShift"
+        component={ApproveChangeShift}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
