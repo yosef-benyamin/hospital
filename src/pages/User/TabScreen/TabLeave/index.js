@@ -15,7 +15,7 @@ import {
   COLOR_RED,
 } from '../../../../component/Constant';
 import {MMKV} from 'react-native-mmkv';
-import {child, get, getDatabase, ref} from 'firebase/database';
+import {getLeavesByID} from '../../../../firestore/User/TabLeave';
 import {FlashList} from '@shopify/flash-list';
 
 const {height} = Dimensions.get('window');
@@ -24,12 +24,8 @@ export default class TabLeave extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allContact: {},
-      contactKey: [],
-      tab: 1,
-      expand: false,
-      leaves: {},
-      noData: true,
+      leaves: [],
+      employee: {},
     };
   }
 
@@ -39,18 +35,16 @@ export default class TabLeave extends Component {
     const employee = JSON.parse(jsonUser);
 
     this.setState({employee});
-    this.initApi();
+    this.initApi(employee);
   };
 
-  initApi = () => {
-    const db = ref(getDatabase());
-    get(child(db, 'leaves/')).then(snapshot => {
-      if (snapshot.exists()) {
-        this.setState({leaves: snapshot.val()});
-      } else {
-        console.log('No Data Available');
-      }
+  initApi = async employee => {
+    const leaves = [];
+    const querySnapshot = await getLeavesByID(employee.key);
+    querySnapshot.forEach(doc => {
+      leaves.push({...doc.data(), key: doc.id});
     });
+    this.setState({leaves});
   };
 
   handleRenderNoData = () => {
@@ -98,48 +92,30 @@ export default class TabLeave extends Component {
   };
 
   handleLeave = ({item}) => {
-    // Check if we need to update noData state
-    const hasMatchingEmployee = Object.entries(item[1]).some(
-      ([key]) => key === Object.keys(this.state.employee)[0],
+    return (
+      <View style={styles.viewCard} key={item.key}>
+        <View>
+          <Text style={styles.textTitle}>{item.dayLeave} Hari</Text>
+          <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
+          <Text style={styles.textGrey}>{item.reason}</Text>
+          {item.approval === 'rejected' && (
+            <Text style={styles.red}>{item.reasonReject}</Text>
+          )}
+        </View>
+        <View>{this.handleStatus(item.approval)}</View>
+      </View>
     );
-
-    // Update state outside of render if needed
-    if (hasMatchingEmployee && this.state.noData) {
-      // Use setTimeout to avoid state updates during render
-      setTimeout(() => {
-        this.setState({noData: false});
-      }, 0);
-    }
-
-    return Object.entries(item[1]).map(([key, val]) => {
-      if (key === Object.keys(this.state.employee)[0]) {
-        return (
-          <View style={styles.viewCard} key={`${item[0]} ${key}`}>
-            <View>
-              <Text style={styles.textTitle}>{val.dayLeave} Hari</Text>
-              <Text style={styles.textGrey}>{this.handleDate(item[0])}</Text>
-              <Text style={styles.textGrey}>{val.reason}</Text>
-              {val.approval === 'rejected' && (
-                <Text style={styles.red}>{val.reasonReject}</Text>
-              )}
-            </View>
-            <View>{this.handleStatus(val.approval)}</View>
-          </View>
-        );
-      }
-    });
   };
 
   handleRenderData = () => {
     return (
       <>
-        <View
-          style={[styles.viewFlashList, this.state.noData && styles.noData]}>
+        <View style={styles.viewFlashList}>
           <FlashList
-            data={Object.entries(this.state.leaves)}
+            data={this.state.leaves}
             renderItem={this.handleLeave}
             estimatedItemSize={30}
-            onRefresh={this.initApi}
+            onRefresh={() => this.initApi(this.state.employee)}
             refreshing={false}
             ListEmptyComponent={this.handleRenderNoData()}
           />
@@ -151,15 +127,6 @@ export default class TabLeave extends Component {
         </TouchableOpacity>
       </>
     );
-  };
-
-  handleStyleActive = item => {
-    switch (this.state.tab === item) {
-      case true:
-        return styles.tabActive;
-      case false:
-        return styles.tabNonActive;
-    }
   };
 
   render() {
@@ -247,23 +214,6 @@ const styles = StyleSheet.create({
     top: '90%',
     left: '80%',
   },
-  tabActive: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 10,
-    color: '#1F2024',
-    fontWeight: 'bold',
-    width: '100%',
-    textAlign: 'center',
-  },
-  tabNonActive: {
-    borderRadius: 16,
-    padding: 10,
-    color: '#71727A',
-    fontWeight: 'bold',
-    width: '100%',
-    textAlign: 'center',
-  },
   textGrey: {
     color: 'grey',
   },
@@ -271,8 +221,5 @@ const styles = StyleSheet.create({
     height: '90%',
     width: '100%',
     padding: 16,
-  },
-  noData: {
-    height: '5%',
   },
 });
