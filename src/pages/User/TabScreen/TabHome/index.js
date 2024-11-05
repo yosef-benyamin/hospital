@@ -11,39 +11,47 @@ import SmallCard from '../../../../component/SmallCard';
 import {ButtonSmall} from '../../../../component/ButtonSmall';
 import {COLOR_BLUE} from '../../../../component/Constant';
 import {Header} from '../../../../component/Header';
-import {
-  get,
-  getDatabase,
-  limitToFirst,
-  orderByKey,
-  query,
-  ref,
-  startAt,
-} from 'firebase/database';
 import {FlashList} from '@shopify/flash-list';
 import {MMKV} from 'react-native-mmkv';
+import {getSchedules} from '../../../../firestore/Spv/TabHome';
 
 export default class TabHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tab: 1,
-      filter: 'Pagi',
+      filter: 'Semua',
       schedules: {},
-      data: {},
+      employee: {},
       shift: 'Malam',
-      startAfter: '2024-10-01',
+      currentDate: '',
+      currentTime: '',
+      schedulesNext: {},
+      currentMonth: '',
+      nextMonth: '',
     };
   }
 
   componentDidMount = async () => {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
-    const employee = Object.values(JSON.parse(jsonUser))[0];
+    const employee = JSON.parse(jsonUser);
 
-    this.setState({data: employee});
+    const currentMonth = new Date().toLocaleDateString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+    });
 
-    this.initApi();
+    const date = new Date();
+    date.setMonth(date.getMonth() + 1);
+    const nextMonth = date.toLocaleDateString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+    });
+
+    this.setState({employee, currentMonth, nextMonth});
+
+    this.initApi(employee, currentMonth, nextMonth);
 
     this.handleCurrentDateTime();
 
@@ -65,30 +73,14 @@ export default class TabHome extends Component {
     }, 1000);
   };
 
-  initApi = async () => {
-    const db = getDatabase();
-    const schedulesRef = query(
-      ref(db, 'schedules'),
-      orderByKey(),
-      startAt(this.state.startAfter),
-      limitToFirst(5),
-    );
-
-    try {
-      const snapshot = await get(schedulesRef);
-      if (snapshot.exists()) {
-        const length = Object.keys(snapshot.val()).length;
-        const startAfter = Object.keys(snapshot.val())[length - 1];
-        this.setState(prevState => ({
-          schedules: {...prevState.schedules, ...snapshot.val()},
-          startAfter,
-        }));
-      } else {
-        console.log('No Data Available');
-      }
-    } catch (error) {
-      console.error('Error mengambil karyawan:', error);
-      throw error;
+  initApi = async (employee, currentMonth, nextMonth) => {
+    const schedules = await getSchedules(employee.department, currentMonth);
+    const schedulesNext = await getSchedules(employee.department, nextMonth);
+    if (schedules) {
+      this.setState({schedules});
+    }
+    if (schedulesNext) {
+      this.setState({schedulesNext});
     }
   };
 
@@ -113,68 +105,64 @@ export default class TabHome extends Component {
   };
 
   handleAllSchedules = ({item}) => {
-    const {filter} = this.state;
-    const [date, schedules] = item;
-
-    return Object.entries(schedules).flatMap(([room, shifts]) =>
-      Object.entries(shifts)
-        .filter(
-          ([shift]) =>
-            shift.toLowerCase() === filter.toLowerCase() || filter === 'Semua',
-        )
-        .map(([shift, val]) => (
-          <View key={`${date}-${room}-${shift}`} style={styles.btnContent}>
+    const {filter, tab, currentMonth, nextMonth} = this.state;
+    const [key, val] = item;
+    const date = tab === 3 ? nextMonth : currentMonth;
+    return Object.entries(val.shift)
+      .filter(([shift]) => shift === filter.toLowerCase() || filter === 'Semua')
+      .map(([shift, value]) => {
+        return (
+          <View style={styles.btnContent} key={`${val.day}${shift}`}>
             <View>
-              <Text style={styles.textBold}>{room}</Text>
-              {Object.values(val).map((value, index) => (
-                <Text style={styles.textName} key={index}>
-                  {value}
-                </Text>
-              ))}
+              {Object.entries(value).map(([id, name]) => {
+                return (
+                  <Text style={styles.textName} key={id}>
+                    {name}
+                  </Text>
+                );
+              })}
             </View>
             <View>
-              <Text style={styles.textDate}>{this.handleDate(date)}</Text>
+              <Text style={styles.textDate}>
+                {this.handleDate(`${date}-${String(val.day).padStart(2, '0')}`)}
+              </Text>
               <Text style={styles.textDate}>{shift}</Text>
             </View>
           </View>
-        )),
-    );
+        );
+      });
   };
 
   handleMySchedule = ({item}) => {
-    const {filter, data} = this.state;
-    const [date, schedules] = item;
-
-    let show = false;
-
-    return Object.entries(schedules).flatMap(([room, shifts]) =>
-      Object.entries(shifts)
-        .filter(
-          ([shift]) =>
-            shift.toLowerCase() === filter.toLowerCase() || filter === 'Semua',
-        )
-        .map(([shift, val]) => {
-          show = Object.values(val).toString().includes(data.name);
+    const {filter, employee, currentMonth} = this.state;
+    const [key, val] = item;
+    return Object.entries(val.shift)
+      .filter(([shift]) => shift === filter.toLowerCase() || filter === 'Semua')
+      .map(([shift, value]) => {
+        if (Object.keys(value).some(id => id === employee.id)) {
           return (
-            <View
-              key={`${date}-${room}-${shift}`}
-              style={show ? styles.btnContent : styles.noContent}>
+            <View style={styles.btnContent} key={`${val.day}${shift}`}>
               <View>
-                <Text style={styles.textBold}>{room}</Text>
-                {Object.values(val).map((value, index) => (
-                  <Text style={styles.textName} key={index}>
-                    {value}
-                  </Text>
-                ))}
+                {Object.entries(value).map(([id, name]) => {
+                  return (
+                    <Text style={styles.textName} key={id}>
+                      {name}
+                    </Text>
+                  );
+                })}
               </View>
               <View>
-                <Text style={styles.textDate}>{this.handleDate(date)}</Text>
+                <Text style={styles.textDate}>
+                  {this.handleDate(
+                    `${currentMonth}-${String(val.day).padStart(2, '0')}`,
+                  )}
+                </Text>
                 <Text style={styles.textDate}>{shift}</Text>
               </View>
             </View>
           );
-        }),
-    );
+        }
+      });
   };
 
   handleRenderNoData = () => {
@@ -192,32 +180,42 @@ export default class TabHome extends Component {
   };
 
   handleContent = () => {
-    switch (this.state.tab) {
+    const {tab, schedules, schedulesNext} = this.state;
+    switch (tab) {
       case 1:
-        if (Object.keys(this.state.schedules).length !== 0) {
+        if (Object.keys(schedules).length !== 0) {
           return (
             <View style={styles.viewFlashList}>
               <FlashList
-                data={Object.entries(this.state.schedules)}
+                data={Object.entries(schedules)}
                 renderItem={this.handleMySchedule}
                 estimatedItemSize={120}
-                onEndReached={() => this.initApi()}
-                onEndReachedThreshold={1}
               />
             </View>
           );
         }
         return this.handleRenderNoData();
       case 2:
-        if (Object.keys(this.state.schedules).length !== 0) {
+        if (Object.keys(schedules).length !== 0) {
           return (
             <View style={styles.viewFlashList}>
               <FlashList
-                data={Object.entries(this.state.schedules)}
+                data={Object.entries(schedules)}
                 renderItem={this.handleAllSchedules}
                 estimatedItemSize={120}
-                onEndReached={() => this.initApi()}
-                onEndReachedThreshold={1}
+              />
+            </View>
+          );
+        }
+        return this.handleRenderNoData();
+      case 3:
+        if (Object.keys(schedulesNext).length !== 0) {
+          return (
+            <View style={styles.viewFlashList}>
+              <FlashList
+                data={Object.entries(schedulesNext)}
+                renderItem={this.handleAllSchedules}
+                estimatedItemSize={120}
               />
             </View>
           );
@@ -250,6 +248,11 @@ export default class TabHome extends Component {
           onPress={() => this.setState({tab: 2})}>
           <Text style={this.handleStyleActive(2)}>Jadwal Bulan Ini</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btnTab}
+          onPress={() => this.setState({tab: 3})}>
+          <Text style={this.handleStyleActive(3)}>Jadwal Bulan Depan</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -259,37 +262,43 @@ export default class TabHome extends Component {
   };
 
   render() {
+    const {employee, currentDate, currentTime, shift, filter} = this.state;
     return (
       <View style={styles.viewContainer}>
         <Header />
         <View style={styles.viewGreeting}>
-          <Text style={styles.textGreeting}>Hi, {this.state.data.name}</Text>
-          <Text style={styles.textGreeting}>{this.state.data.department}</Text>
+          <Text style={styles.textGreeting}>Hi, {employee.name}</Text>
+          <Text style={styles.textGreeting}>{employee.department}</Text>
         </View>
         <View style={styles.viewTopCard}>
           <View>
-            <Text style={styles.textCardBold}>{this.state.currentDate}</Text>
-            <Text style={styles.textCurrentDate}>{this.state.currentTime}</Text>
+            <Text style={styles.textCardBold}>{currentDate}</Text>
+            <Text style={styles.textCurrentDate}>{currentTime}</Text>
           </View>
-          <SmallCard text={this.state.shift} color={'black'} />
+          <SmallCard text={shift} color={'black'} />
         </View>
         <View style={styles.viewWrapper}>
           {this.handleRenderContent()}
           <View style={styles.viewFilter}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <ButtonSmall
+                text={'Semua'}
+                active={filter === 'Semua'}
+                onPress={() => this.handleButtonFilter('Semua')}
+              />
+              <ButtonSmall
                 text={'Pagi'}
-                active={this.state.filter === 'Pagi'}
+                active={filter === 'Pagi'}
                 onPress={() => this.handleButtonFilter('Pagi')}
               />
               <ButtonSmall
                 text={'Siang'}
-                active={this.state.filter === 'Siang'}
+                active={filter === 'Siang'}
                 onPress={() => this.handleButtonFilter('Siang')}
               />
               <ButtonSmall
                 text={'Malam'}
-                active={this.state.filter === 'Malam'}
+                active={filter === 'Malam'}
                 onPress={() => this.handleButtonFilter('Malam')}
               />
             </ScrollView>
@@ -337,6 +346,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F2F7',
     marginBottom: 16,
     padding: 4,
+    alignItems: 'center',
   },
   tabActive: {
     backgroundColor: '#FFFFFF',
@@ -346,6 +356,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
+    fontSize: 10,
   },
   tabNonActive: {
     borderRadius: 16,
@@ -354,9 +365,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
+    fontSize: 10,
   },
   btnTab: {
-    width: '50%',
+    width: '33%',
   },
   viewWrapper: {
     flex: 8,
@@ -365,12 +377,9 @@ const styles = StyleSheet.create({
     margin: 16,
     borderRadius: 16,
   },
-  textBold: {
-    color: '#1F2024',
-    fontWeight: 'bold',
-  },
   viewWrapperContent: {
     paddingHorizontal: 20,
+    height: '83%',
   },
   btnContent: {
     flexDirection: 'row',
@@ -388,9 +397,9 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   viewMiddle: {
+    height: '90%',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '80%',
   },
   image: {
     width: 100,
@@ -401,16 +410,13 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 20,
     textAlign: 'center',
-    padding: 20,
+    padding: 10,
   },
   textName: {
     color: 'grey',
   },
-  noContent: {
-    height: 0,
-  },
   viewFlashList: {
-    height: '90%',
+    height: '100%',
     width: '100%',
   },
   textCurrentDate: {
