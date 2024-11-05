@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, TextInput, Alert} from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
-import {getEmployee, updatePassword} from '../../utils';
+import {getEmployeeByID} from '../../firestore/FormLeave';
+import {updatePassword} from '../../firestore/ChangePassword';
 import {MMKV} from 'react-native-mmkv';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -24,11 +25,16 @@ export default class ChangePassword extends Component {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
     const employee = JSON.parse(jsonUser);
-    const employeeDB = await getEmployee(Object.values(employee)[0].id);
+    const employeeDB = await getEmployeeByID(employee.id);
+
+    let data = {};
+    employeeDB.forEach(emp => {
+      data = emp;
+    });
 
     this.setState({
-      employee: Object.values(employeeDB.val())[0],
-      employeeKey: Object.keys(employee)[0],
+      employee: data.data(),
+      employeeKey: data.id,
     });
   };
 
