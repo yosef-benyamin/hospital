@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {Picker} from '@react-native-picker/picker';
-import {getEmployee, updateLeaveDB} from '../../utils';
 import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import {MMKV} from 'react-native-mmkv';
+import {addLeave, getEmployeeByID} from '../../firestore/FormLeave';
 
 export default class FormLeave extends Component {
   constructor(props) {
@@ -35,12 +35,16 @@ export default class FormLeave extends Component {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
     const employee = JSON.parse(jsonUser);
-    const employeeDB = await getEmployee(Object.values(employee)[0].id);
+    const employeeDB = await getEmployeeByID(employee.id);
+    let data = {};
+    employeeDB.forEach(emp => {
+      data = emp;
+    });
 
     this.setState({
-      employee: Object.values(employeeDB.val())[0],
-      employeeKey: Object.keys(employee)[0],
-      dayLeaveRemain: Object.values(employeeDB.val())[0]?.leave?.annual,
+      employee: data.data(),
+      employeeKey: data.id,
+      dayLeaveRemain: data.data().leave?.annual,
     });
   };
 
@@ -72,9 +76,11 @@ export default class FormLeave extends Component {
         department: employee.department,
         dayLeaveRemain,
         approval: 'waiting',
+        employeeKey,
+        date,
       };
       // updateEmployeeLeave(9, '2024-10-31', 'Cuti-Tahunan');
-      updateLeaveDB(employeeKey, date, dataMerge);
+      addLeave(dataMerge);
       this.props.navigation.goBack();
     } else {
       Alert.alert(
