@@ -5,32 +5,42 @@ import {
   COLOR_GREEN,
   COLOR_RED,
 } from '../../../../component/Constant';
-import {child, get, getDatabase, ref} from 'firebase/database';
+import {getLeavesByRoom} from '../../../../firestore/Spv/TabLeave';
 import {FlashList} from '@shopify/flash-list';
 import SmallCard from '../../../../component/SmallCard';
+import {MMKV} from 'react-native-mmkv';
 
 export default class TabLeave extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tab: 1,
-      leaves: {},
+      leavesWaiting: [],
+      leavesNotWaiting: [],
     };
   }
 
-  componentDidMount = () => {
-    this.initApi();
+  componentDidMount = async () => {
+    const storage = new MMKV();
+    const jsonUser = storage.getString('employee');
+    const employee = JSON.parse(jsonUser);
+
+    this.setState({employee});
+    this.initApi(employee);
   };
 
-  initApi = () => {
-    const db = ref(getDatabase());
-    get(child(db, 'leaves/')).then(snapshot => {
-      if (snapshot.exists()) {
-        this.setState({leaves: snapshot.val()});
+  initApi = async employee => {
+    const leavesWaiting = [];
+    const leavesNotWaiting = [];
+    const querySnapshot = await getLeavesByRoom(employee.department);
+    querySnapshot.forEach(doc => {
+      if (doc.data().approval === 'waiting') {
+        leavesWaiting.push({...doc.data(), key: doc.id});
       } else {
-        console.log('No Data Available');
+        leavesNotWaiting.push({...doc.data(), key: doc.id});
       }
     });
+    this.setState({leavesWaiting, leavesNotWaiting});
   };
 
   handleRenderNoData = () => {
@@ -88,78 +98,86 @@ export default class TabLeave extends Component {
     }
   };
 
-  handleWaiting = (item, key, val) => {
-    return (
-      <TouchableOpacity
-        style={styles.viewCard}
-        key={`${item[0]} ${key}`}
-        onPress={() =>
-          this.props.navigation.navigate('FormApproval', {
-            date: item[0],
-            id: key,
-            ...val,
-          })
-        }>
-        <View>
-          <Text style={styles.textTitle}>{val.name}</Text>
-          <Text style={styles.textTitle}>{val.department}</Text>
-          <Text style={styles.textGrey}>{this.handleDate(item[0])}</Text>
-          <Text style={styles.textGrey}>{this.textLeave(val.onLeave)}</Text>
-        </View>
-        <SmallCard text={'Lihat'} color={'blue'} />
-      </TouchableOpacity>
-    );
+  handleWaiting = ({item}) => {
+    if (item.approval === 'waiting') {
+      return (
+        <TouchableOpacity
+          style={styles.viewCard}
+          key={item.key}
+          onPress={() =>
+            this.props.navigation.navigate('FormApproval', {
+              id: item.key,
+              ...item,
+            })
+          }>
+          <View>
+            <Text style={styles.textTitle}>{item.name}</Text>
+            <Text style={styles.textTitle}>{item.department}</Text>
+            <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
+            <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
+          </View>
+          <SmallCard text={'Lihat'} color={'blue'} />
+        </TouchableOpacity>
+      );
+    }
   };
 
   handleLeave = ({item}) => {
-    return Object.entries(item[1]).map(([key, val]) => {
-      if (val.approval === 'waiting' && this.state.tab === 1) {
-        return this.handleWaiting(item, key, val);
-      }
-
-      if (val.approval !== 'waiting' && this.state.tab === 2) {
-        return (
-          <TouchableOpacity
-            style={styles.viewCard}
-            key={`${item[0]} ${key}`}
-            onPress={() =>
-              this.props.navigation.navigate('FormApproval', {
-                date: item[0],
-                id: key,
-                ...val,
-              })
-            }>
-            <View>
-              <Text style={styles.textTitle}>{val.name}</Text>
-              <Text style={styles.textTitle}>{val.department}</Text>
-              <Text style={styles.textGrey}>{this.handleDate(item[0])}</Text>
-              <Text style={styles.textGrey}>{this.textLeave(val.onLeave)}</Text>
-              {val.approval === 'rejected' && (
-                <Text style={styles.red}>{val.reasonReject}</Text>
-              )}
-            </View>
-            <View>{this.handleStatus(val.approval)}</View>
-          </TouchableOpacity>
-        );
-      }
-    });
+    if (item.approval !== 'waiting') {
+      return (
+        <TouchableOpacity
+          style={styles.viewCard}
+          key={item.key}
+          onPress={() =>
+            this.props.navigation.navigate('FormApproval', {
+              id: item.key,
+              ...item,
+            })
+          }>
+          <View>
+            <Text style={styles.textTitle}>{item.name}</Text>
+            <Text style={styles.textTitle}>{item.department}</Text>
+            <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
+            <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
+            {item.approval === 'rejected' && (
+              <Text style={styles.red}>{item.reasonReject}</Text>
+            )}
+          </View>
+          <View>{this.handleStatus(item.approval)}</View>
+        </TouchableOpacity>
+      );
+    }
   };
 
   handleRenderData = () => {
-    return (
-      <>
-        <View style={styles.viewFlashList}>
-          <FlashList
-            data={Object.entries(this.state.leaves)}
-            renderItem={this.handleLeave}
-            estimatedItemSize={30}
-            onRefresh={this.initApi}
-            refreshing={false}
-            ListEmptyComponent={this.handleRenderNoData}
-          />
-        </View>
-      </>
-    );
+    switch (this.state.tab) {
+      case 1:
+        return (
+          <View style={styles.viewFlashList}>
+            <FlashList
+              data={this.state.leavesWaiting}
+              renderItem={this.handleWaiting}
+              estimatedItemSize={30}
+              onRefresh={() => this.initApi(this.state.employee)}
+              refreshing={false}
+              ListEmptyComponent={this.handleRenderNoData}
+            />
+          </View>
+        );
+      case 2:
+        return (
+          <View style={styles.viewFlashList}>
+            <FlashList
+              data={this.state.leavesNotWaiting}
+              renderItem={this.handleLeave}
+              estimatedItemSize={30}
+              onRefresh={() => this.initApi(this.state.employee)}
+              refreshing={false}
+              ListEmptyComponent={this.handleRenderNoData}
+            />
+          </View>
+        );
+    }
   };
 
   handleStyleActive = item => {
