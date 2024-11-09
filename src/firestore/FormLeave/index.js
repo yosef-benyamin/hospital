@@ -16,6 +16,17 @@ export async function getEmployeeByID(id) {
   return querySnapshot;
 }
 
+export async function getSpvByDept(department) {
+  const citiesRef = collection(db, 'employees');
+  const q = query(
+    citiesRef,
+    where('department', '==', department),
+    where('role', '==', 'spv'),
+  );
+  const querySnapshot = await getDocs(q);
+  return querySnapshot;
+}
+
 export async function addLeave(dataLeave) {
   const docRef = await addDoc(collection(db, 'leaves'), dataLeave);
   return docRef;

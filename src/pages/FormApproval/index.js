@@ -11,8 +11,6 @@ export default class FormApproval extends Component {
     this.state = {
       reason: '',
       address: '',
-      leader: 'dokter a',
-      head: 'kepala radiologi',
       dayLeave: 1,
       employee: {},
       showModal: false,
@@ -65,8 +63,7 @@ export default class FormApproval extends Component {
       address,
       date,
       dayLeave,
-      head,
-      leader,
+      spv,
       name,
       onLeave,
       reason,
@@ -91,8 +88,7 @@ export default class FormApproval extends Component {
       onLeave,
       reason,
       address,
-      leader,
-      head,
+      spv,
       dayLeave,
       name,
       department,
@@ -174,12 +170,10 @@ export default class FormApproval extends Component {
           <Text style={styles.textNormal}>{employee.dayLeave} Hari</Text>
           <Text style={styles.textSubTitle}>Alamat Selama Cuti</Text>
           <Text style={styles.textNormal}>{employee.address}</Text>
-          <Text style={styles.textSubTitle}>Pertimbangan atasan langsung</Text>
-          <Text style={styles.textNormal}>{employee.leader}</Text>
           <Text style={styles.textSubTitle}>
             Pejabat pemberi cuti (Kepala Ruangan)
           </Text>
-          <Text style={styles.textNormal}>{employee.head}</Text>
+          <Text style={styles.textNormal}>{employee?.spv?.name}</Text>
         </View>
         <View style={styles.viewWrapperButton}>
           <View style={styles.viewContentButton}>

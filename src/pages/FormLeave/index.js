@@ -12,7 +12,11 @@ import {ButtonLarge} from '../../component/ButtonLarge';
 import {Picker} from '@react-native-picker/picker';
 import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import {MMKV} from 'react-native-mmkv';
-import {addLeave, getEmployeeByID} from '../../firestore/FormLeave';
+import {
+  addLeave,
+  getEmployeeByID,
+  getSpvByDept,
+} from '../../firestore/FormLeave';
 
 export default class FormLeave extends Component {
   constructor(props) {
@@ -22,12 +26,12 @@ export default class FormLeave extends Component {
       dateLeave: new Date(),
       reason: '',
       address: '',
-      leader: 'dokter a',
-      head: 'kepala radiologi',
       dayLeave: 1,
       dayLeaveRemain: 0,
       employee: {},
       employeeKey: '',
+      spvPicker: [],
+      spv: '',
     };
   }
 
@@ -46,6 +50,19 @@ export default class FormLeave extends Component {
       employeeKey: data.id,
       dayLeaveRemain: data.data().leave?.annual,
     });
+
+    const spvPicker = [{label: 'Silakan pilih', value: ''}];
+    const employees = await getSpvByDept(employee.department);
+    employees.forEach(emp => {
+      spvPicker.push({
+        label: emp.data().name,
+        value: {
+          id: emp.data().id,
+          name: emp.data().name,
+        },
+      });
+    });
+    this.setState({spvPicker});
   };
 
   handleSubmit = () => {
@@ -54,8 +71,7 @@ export default class FormLeave extends Component {
       dateLeave,
       reason,
       address,
-      leader,
-      head,
+      spv,
       dayLeave,
       dayLeaveRemain,
       employee,
@@ -64,13 +80,12 @@ export default class FormLeave extends Component {
 
     const date = dateLeave.toLocaleDateString('en-CA');
 
-    if (reason && address) {
+    if (reason && address && spv) {
       const dataMerge = {
         onLeave,
         reason,
         address,
-        leader,
-        head,
+        spv,
         dayLeave,
         name: employee.name,
         department: employee.department,
@@ -85,7 +100,7 @@ export default class FormLeave extends Component {
     } else {
       Alert.alert(
         'Perhatian',
-        'Alasan Cuti dan Alamat Selamat Cuti tidak boleh kosong',
+        'Alasan Cuti, Alamat Selamat Cuti, dan Pemberi Cuti tidak boleh kosong',
       );
     }
   };
@@ -105,6 +120,12 @@ export default class FormLeave extends Component {
 
   onChangeText = (stateName, value) => {
     this.setState({[stateName]: value});
+  };
+
+  handlePicker = () => {
+    return this.state.spvPicker.map((item, index) => {
+      return <Picker.Item key={index} label={item.label} value={item.value} />;
+    });
   };
 
   render() {
@@ -220,28 +241,17 @@ export default class FormLeave extends Component {
             value={this.state.address}
             onChangeText={value => this.onChangeText('address', value)}
           />
-          <Text style={styles.textSubTitle}>Pertimbangan atasan langsung</Text>
-          <View style={styles.viewPicker}>
-            <Picker
-              selectedValue={this.state.leader}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({leader: itemValue})
-              }>
-              <Picker.Item label="Dokter A" value="dokter a" />
-            </Picker>
-          </View>
           <Text style={styles.textSubTitle}>
             Pejabat pemberi cuti (Kepala Ruangan)
           </Text>
           <View style={styles.viewPicker}>
             <Picker
-              selectedValue={this.state.head}
+              selectedValue={this.state.spv}
               style={styles.picker}
               onValueChange={(itemValue, itemIndex) =>
-                this.setState({head: itemValue})
+                this.setState({spv: itemValue})
               }>
-              <Picker.Item label="Kepala Radiologi" value="kepala radiologi" />
+              {this.handlePicker()}
             </Picker>
           </View>
           <ButtonLarge text={'Ajukan'} onPress={this.handleSubmit} />
