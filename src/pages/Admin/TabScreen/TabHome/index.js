@@ -243,7 +243,8 @@ export default class TabHome extends Component {
   };
 
   handleContent = () => {
-    const {tab, schedules, schedulesNext} = this.state;
+    const {tab, schedules, schedulesNext, employee, currentMonth, nextMonth} =
+      this.state;
     switch (tab) {
       case 1:
         if (Object.keys(schedules).length !== 0) {
@@ -253,6 +254,10 @@ export default class TabHome extends Component {
                 data={Object.entries(schedules)}
                 renderItem={this.handleMySchedule}
                 estimatedItemSize={120}
+                onRefresh={() =>
+                  this.initApi(employee, currentMonth, nextMonth)
+                }
+                refreshing={false}
               />
             </View>
           );
@@ -266,6 +271,10 @@ export default class TabHome extends Component {
                 data={Object.entries(schedules)}
                 renderItem={this.handleAllSchedules}
                 estimatedItemSize={120}
+                onRefresh={() =>
+                  this.initApi(employee, currentMonth, nextMonth)
+                }
+                refreshing={false}
               />
             </View>
           );
@@ -279,6 +288,10 @@ export default class TabHome extends Component {
                 data={Object.entries(schedulesNext)}
                 renderItem={this.handleAllSchedules}
                 estimatedItemSize={120}
+                onRefresh={() =>
+                  this.initApi(employee, currentMonth, nextMonth)
+                }
+                refreshing={false}
               />
             </View>
           );
