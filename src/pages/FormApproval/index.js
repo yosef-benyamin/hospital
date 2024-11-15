@@ -39,6 +39,17 @@ export default class FormApproval extends Component {
     });
   };
 
+  handleEndDate = (date, day) => {
+    let newDate = new Date(date);
+
+    newDate.setDate(newDate.getDate() + day);
+    return new Date(newDate).toLocaleString('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   handleTextLeave = onLeave => {
     switch (onLeave) {
       case 'annual':
@@ -166,6 +177,10 @@ export default class FormApproval extends Component {
           <Text style={styles.textNormal}>{employee.reason}</Text>
           <Text style={styles.textSubTitle}>Lama Cuti</Text>
           <Text style={styles.textNormal}>{employee.dayLeave} Hari</Text>
+          <Text style={styles.textSubTitle}>Akhir Cuti</Text>
+          <Text style={styles.textNormal}>
+            {this.handleEndDate(employee.date, employee.dayLeave)}
+          </Text>
           <Text style={styles.textSubTitle}>Alamat Selama Cuti</Text>
           <Text style={styles.textNormal}>{employee.address}</Text>
           <Text style={styles.textSubTitle}>
