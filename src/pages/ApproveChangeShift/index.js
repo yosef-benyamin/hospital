@@ -115,8 +115,14 @@ export default class ApproveChangeShift extends Component {
                 `${item.currentMonth}-${item.scheduleValue.day}`,
               )}
             </Text>
-            <Text>{`${item.employee.name} > ${item.shift}`}</Text>
-            <Text>{`${item.personValue.name} > ${item.scheduleValue.shift}`}</Text>
+            <Text
+              style={
+                styles.textGrey
+              }>{`${item.employee.name} > ${item.shift}`}</Text>
+            <Text
+              style={
+                styles.textGrey
+              }>{`${item.personValue.name} > ${item.scheduleValue.shift}`}</Text>
           </View>
           <SmallCard
             text={item.approve ? 'Disetujui ' : 'Setuju'}
