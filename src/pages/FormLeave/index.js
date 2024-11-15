@@ -73,7 +73,6 @@ export default class FormLeave extends Component {
       address,
       spv,
       dayLeave,
-      dayLeaveRemain,
       employee,
       employeeKey,
     } = this.state;
@@ -89,7 +88,6 @@ export default class FormLeave extends Component {
         dayLeave,
         name: employee.name,
         department: employee.department,
-        dayLeaveRemain,
         approval: 'waiting',
         employeeKey,
         date,

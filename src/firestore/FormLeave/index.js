@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -37,13 +38,16 @@ export async function updateLeave(id, dataLeave) {
   await updateDoc(docRef, dataLeave);
 }
 
-export async function approveLeaveEmp(
-  employeeId,
-  onLeave,
-  days,
-  dayRemain,
-  approve,
-) {
+export async function approveLeaveEmp(employeeId, onLeave, days, approve) {
+  const docRef = doc(db, 'employees', employeeId);
+  const employeeSnap = await getDoc(docRef);
+
+  let dayRemain = 0;
+  if (employeeSnap.exists()) {
+    dayRemain = Number(employeeSnap.data().leave[onLeave]);
+  } else {
+    console.log('No such document!');
+  }
   let day = 0;
 
   if (approve === 'approved') {
@@ -51,7 +55,6 @@ export async function approveLeaveEmp(
   } else {
     day = dayRemain;
   }
-  const docRef = doc(db, 'employees', employeeId);
   const field = `leave.${onLeave}`;
   await updateDoc(docRef, {[field]: day});
 }
