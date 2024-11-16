@@ -78,7 +78,7 @@ export default class FormApproval extends Component {
       Name,
       onLeave,
       reason,
-      id,
+      NIP,
       approval,
       Room,
       employeeKey,
@@ -108,7 +108,7 @@ export default class FormApproval extends Component {
       date,
     };
     try {
-      updateLeave(id, dataMerge);
+      updateLeave(NIP, dataMerge);
       approveLeaveEmp(employeeKey, onLeave, dayLeave, approve);
     } catch (error) {
       console.log('Error:', error);

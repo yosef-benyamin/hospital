@@ -39,7 +39,7 @@ export default class FormLeave extends Component {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
     const employee = JSON.parse(jsonUser);
-    const employeeDB = await getEmployeeByID(employee.id);
+    const employeeDB = await getEmployeeByID(employee.NIP);
     let data = {};
     employeeDB.forEach(emp => {
       data = emp;
@@ -57,7 +57,7 @@ export default class FormLeave extends Component {
       spvPicker.push({
         label: emp.data().Name,
         value: {
-          id: emp.data().id,
+          NIP: emp.data().NIP,
           Name: emp.data().Name,
         },
       });

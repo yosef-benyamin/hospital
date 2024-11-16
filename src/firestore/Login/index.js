@@ -1,11 +1,11 @@
 import {collection, getDocs, query, where} from 'firebase/firestore';
 import {db} from '../../config/firebaseInit';
 
-export async function getEmployeeByIDPass(id, pass) {
+export async function getEmployeeByIDPass(NIP, pass) {
   const citiesRef = collection(db, 'employees');
   const q = query(
     citiesRef,
-    where('id', '==', id),
+    where('NIP', '==', NIP),
     where('Password', '==', pass),
   );
   const querySnapshot = await getDocs(q);

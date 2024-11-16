@@ -67,8 +67,8 @@ export async function generateMonthlySchedule(RoomId, month, year) {
       const shiftIndex = (day + Math.floor(index / 2)) % shifts.length;
       const shift = shifts[shiftIndex];
 
-      // Tambahkan employee.id ke dalam shift yang sesuai
-      daySchedule.shift[shift][employee.id] = employee.Name;
+      // Tambahkan employee.NIP ke dalam shift yang sesuai
+      daySchedule.shift[shift][employee.NIP] = employee.Name;
     });
 
     schedule[day] = {day: day + 1, shift: daySchedule.shift};

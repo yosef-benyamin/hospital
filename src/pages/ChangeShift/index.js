@@ -39,7 +39,7 @@ export default class ChangeShift extends Component {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
     const employee = JSON.parse(jsonUser);
-    const employeeDB = await getEmployeeByID(employee.id);
+    const employeeDB = await getEmployeeByID(employee.NIP);
 
     let data = {};
     employeeDB.forEach(emp => {
@@ -70,7 +70,7 @@ export default class ChangeShift extends Component {
     const schedules = await getSchedules(employee.Room, currentMonth);
     Object.values(schedules).forEach(item =>
       Object.entries(item.shift).forEach(([key, val]) => {
-        if (JSON.stringify(val).includes(this.state.employee.id)) {
+        if (JSON.stringify(val).includes(this.state.employee.NIP)) {
           schedulePicker.push({
             label: this.handleDate(`${currentMonth}-${item.day}`) + ` - ${key}`,
             value: {
@@ -88,7 +88,7 @@ export default class ChangeShift extends Component {
       personPicker.push({
         label: emp.data().Name,
         value: {
-          id: emp.data().id,
+          NIP: emp.data().NIP,
           Name: emp.data().Name,
         },
       });
@@ -102,7 +102,7 @@ export default class ChangeShift extends Component {
       this.state;
     const dataMerge = {
       employee: {
-        id: employee.id,
+        NIP: employee.NIP,
         Name: employee.Name,
       },
       Room: employee.Room,

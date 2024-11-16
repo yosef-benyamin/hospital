@@ -10,9 +10,9 @@ import {
 } from 'firebase/firestore';
 import {db} from '../../config/firebaseInit';
 
-export async function getEmployeeByID(id) {
+export async function getEmployeeByID(NIP) {
   const citiesRef = collection(db, 'employees');
-  const q = query(citiesRef, where('id', '==', id));
+  const q = query(citiesRef, where('NIP', '==', NIP));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }

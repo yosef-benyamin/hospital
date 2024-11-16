@@ -199,7 +199,7 @@ export default class TabHome extends Component {
     return Object.entries(val.shift)
       .filter(([shift]) => shift === filter.toLowerCase() || filter === 'Semua')
       .map(([shift, value]) => {
-        if (Object.keys(value).some(id => id === employee.id)) {
+        if (Object.keys(value).some(NIP => NIP === employee.NIP)) {
           return (
             <View style={styles.btnContent} key={`${val.day}${shift}`}>
               <View>
