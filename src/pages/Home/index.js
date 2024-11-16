@@ -12,6 +12,7 @@ import SmallCard from '../../component/SmallCard';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {getSchedules} from '../../firestore/Spv/TabHome';
 import {ButtonSmall} from '../../component/ButtonSmall';
+import {getRoom} from '../../firestore/Home';
 
 export default class Home extends Component {
   constructor(props) {
@@ -20,18 +21,21 @@ export default class Home extends Component {
       tab: 1,
       schedules: {},
       shift: 'Malam',
-      filter: 'ICU',
+      filter: '',
+      rooms: [],
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     // Pagi: 00.00 - 08.00
     // Siang: 08.00 - 16.00
     // Malam: 16.00 - 00.00
 
-    this.initApi(this.state.filter);
+    const rooms = await getRoom();
+    this.initApi(rooms[0]);
     this.handleCurrentDateTime();
 
+    this.setState({rooms, filter: rooms[0]});
     setInterval(() => {
       this.handleCurrentDateTime();
       const now = new Date();
@@ -151,31 +155,23 @@ export default class Home extends Component {
     this.setState({filter});
   };
 
+  handleFilterData = () => {
+    const {filter, rooms} = this.state;
+    return rooms.map((room, index) => (
+      <ButtonSmall
+        key={index}
+        text={room}
+        active={filter === room}
+        onPress={() => this.handleButtonFilter(room)}
+      />
+    ));
+  };
+
   handleRoom = () => {
-    const {filter} = this.state;
     return (
       <View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <ButtonSmall
-            text={'ICU'}
-            active={filter === 'ICU'}
-            onPress={() => this.handleButtonFilter('ICU')}
-          />
-          <ButtonSmall
-            text={'Radiologi'}
-            active={filter === 'Radiologi'}
-            onPress={() => this.handleButtonFilter('Radiologi')}
-          />
-          <ButtonSmall
-            text={'UGD'}
-            active={filter === 'UGD'}
-            onPress={() => this.handleButtonFilter('UGD')}
-          />
-          <ButtonSmall
-            text={'Rehabilitasi'}
-            active={filter === 'Rehabilitasi'}
-            onPress={() => this.handleButtonFilter('Rehabilitasi')}
-          />
+          {this.handleFilterData()}
         </ScrollView>
       </View>
     );
