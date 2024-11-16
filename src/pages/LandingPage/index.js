@@ -21,7 +21,7 @@ export default class LandingPage extends Component {
     yesterday.setDate(today.getDate() - 1);
 
     if (today.getFullYear() !== yesterday.getFullYear()) {
-      const querySnapshot = await getDocs(collection(db, 'employees'));
+      const querySnapshot = await getDocs(collection(db, 'employess'));
 
       try {
         await resetLeave(querySnapshot);

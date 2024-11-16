@@ -11,14 +11,14 @@ import {
 import {db} from '../../config/firebaseInit';
 
 export async function getEmployeeByID(NIP) {
-  const citiesRef = collection(db, 'employees');
+  const citiesRef = collection(db, 'employess');
   const q = query(citiesRef, where('NIP', '==', NIP));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
 export async function getSpvByDept(Room) {
-  const citiesRef = collection(db, 'employees');
+  const citiesRef = collection(db, 'employess');
   const q = query(
     citiesRef,
     where('Room', '==', Room),
@@ -39,7 +39,7 @@ export async function updateLeave(id, dataLeave) {
 }
 
 export async function approveLeaveEmp(employeeId, onLeave, days, approve) {
-  const docRef = doc(db, 'employees', employeeId);
+  const docRef = doc(db, 'employess', employeeId);
   const employeeSnap = await getDoc(docRef);
 
   let dayRemain = 0;

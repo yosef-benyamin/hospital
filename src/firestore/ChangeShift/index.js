@@ -12,7 +12,7 @@ import {
 import {db} from '../../config/firebaseInit';
 
 export async function getEmployeeByDept(Room) {
-  const citiesRef = collection(db, 'employees');
+  const citiesRef = collection(db, 'employess');
   const q = query(citiesRef, where('Room', '==', Room));
   const querySnapshot = await getDocs(q);
   return querySnapshot;

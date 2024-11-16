@@ -19,7 +19,7 @@ export async function resetLeave(employee) {
   // Iterasi setiap employee untuk diupdate
 
   employee.forEach(emp => {
-    const employeeRef = doc(db, 'employees', emp.id);
+    const employeeRef = doc(db, 'employess', emp.id);
 
     // Menambahkan operasi update ke batch
     batch.update(employeeRef, {
@@ -44,7 +44,7 @@ export const uploadMockDataToFirestore = async () => {
     let currentBatch = writeBatch(db);
 
     for (const [key, value] of Object.entries(mockData)) {
-      const docRef = doc(db, 'employees', key);
+      const docRef = doc(db, 'employess', key);
       currentBatch.set(docRef, value);
       count++;
 
@@ -78,8 +78,8 @@ export const uploadMockDataToFirestore = async () => {
 
 export const devBackup = async () => {
   try {
-    // Get all documents from employees collection
-    const querySnapshot = await getDocs(collection(db, 'employees'));
+    // Get all documents from employess collection
+    const querySnapshot = await getDocs(collection(db, 'employess'));
     const backupData = {};
 
     querySnapshot.forEach(data => {

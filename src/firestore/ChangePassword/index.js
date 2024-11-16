@@ -10,7 +10,7 @@ import {
 import {db} from '../../config/firebaseInit';
 
 export async function getEmployeeByID(NIP) {
-  const citiesRef = collection(db, 'employees');
+  const citiesRef = collection(db, 'employess');
   const q = query(citiesRef, where('NIP', '==', NIP));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
@@ -40,13 +40,13 @@ export async function approveLeaveEmp(
   } else {
     day = dayRemain;
   }
-  const docRef = doc(db, 'employees', employeeId);
+  const docRef = doc(db, 'employess', employeeId);
   const field = `Leaves.${onLeave}`;
   await updateDoc(docRef, {[field]: day});
 }
 
 export async function updatePassword(employeeId, Password) {
-  const docRef = doc(db, 'employees', employeeId);
+  const docRef = doc(db, 'employess', employeeId);
   // Melakukan update ke database
   await updateDoc(docRef, {Password});
 }

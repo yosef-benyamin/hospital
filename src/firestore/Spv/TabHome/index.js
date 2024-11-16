@@ -11,7 +11,7 @@ import {db} from '../../../config/firebaseInit';
 
 export async function generateMonthlySchedule(RoomId, month, year) {
   // Ambil data karyawan dari Firestore berdasarkan Room
-  const employeesRef = collection(db, 'employees');
+  const employeesRef = collection(db, 'employess');
   const q = query(employeesRef, where('Room', '==', RoomId));
   const employeesSnapshot = await getDocs(q);
   const employees = employeesSnapshot.docs.map(emp => ({
