@@ -22,8 +22,9 @@ export default class FormLeave extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      onLeave: 'annual',
+      onLeave: 'Annual',
       dateLeave: new Date(),
+      endDate: new Date(),
       reason: '',
       address: '',
       dayLeave: 1,
@@ -69,6 +70,7 @@ export default class FormLeave extends Component {
     const {
       onLeave,
       dateLeave,
+      endDate,
       reason,
       address,
       spv,
@@ -78,6 +80,7 @@ export default class FormLeave extends Component {
     } = this.state;
 
     const date = dateLeave.toLocaleDateString('en-CA');
+    const dateEnd = endDate.toLocaleDateString('en-CA');
 
     if (reason && address && spv) {
       const dataMerge = {
@@ -91,6 +94,7 @@ export default class FormLeave extends Component {
         approval: 'waiting',
         employeeKey,
         date,
+        dateEnd,
       };
       // updateEmployeeLeave(9, '2024-10-31', 'Cuti-Tahunan');
       addLeave(dataMerge);
@@ -104,15 +108,19 @@ export default class FormLeave extends Component {
   };
 
   onChangeDate = (event, dateLeave) => {
-    this.setState({dateLeave});
+    this.setState({[event]: dateLeave});
+    if (this.state.endDate < dateLeave) {
+      this.setState({endDate: dateLeave});
+    }
   };
 
-  showDatepicker = () => {
+  showDatepicker = dateVal => {
+    const {dateLeave} = this.state;
     DateTimePickerAndroid.open({
-      value: this.state.dateLeave,
-      onChange: this.onChangeDate,
+      value: this.state[dateVal],
+      onChange: (event, value) => this.onChangeDate(dateVal, value),
       mode: 'date',
-      minimumDate: new Date(),
+      minimumDate: dateVal === 'endDate' ? new Date(dateLeave) : new Date(),
     });
   };
 
@@ -124,6 +132,31 @@ export default class FormLeave extends Component {
     return this.state.spvPicker.map((item, index) => {
       return <Picker.Item key={index} label={item.label} value={item.value} />;
     });
+  };
+
+  handlePickerOnLeave = () => {
+    const {employee} = this.state;
+    if (employee.Leaves) {
+      return Object.entries(employee?.Leaves).map(([key, val]) => (
+        <Picker.Item label={key} value={key} enabled={val > 0} />
+      ));
+    }
+  };
+
+  handleOnLeaveRemain = () => {
+    const {employee} = this.state;
+    if (employee.Leaves) {
+      return (
+        <View style={styles.viewTextSmall}>
+          {Object.entries(employee.Leaves).map(([key, val]) => (
+            <View style={styles.viewLeaveRemain}>
+              <Text style={styles.textSmall}>{key}</Text>
+              <Text style={styles.textSmall}>{val}</Text>
+            </View>
+          ))}
+        </View>
+      );
+    }
   };
 
   render() {
@@ -145,58 +178,28 @@ export default class FormLeave extends Component {
                   dayLeaveRemain: employee?.Leaves[itemValue],
                 })
               }>
-              <Picker.Item
-                label="Tahunan"
-                value="annual"
-                enabled={employee?.Leaves?.annual !== 0}
-              />
-              <Picker.Item label="Cuti Sakit" value="sick" />
-              <Picker.Item
-                label="Cuti Alasan Penting"
-                value="urgent"
-                enabled={employee?.Leaves?.urgent !== 0}
-              />
-              <Picker.Item
-                label="Cuti Besar"
-                value="holiday"
-                enabled={employee?.Leaves?.holiday !== 0}
-              />
-              <Picker.Item
-                label="Cuti Melahirkan"
-                value="maternity"
-                enabled={employee?.Leaves?.maternity !== 0}
-              />
-              <Picker.Item
-                label="Cuti di Luar Tanggungan"
-                value="unpaid"
-                enabled={employee?.Leaves?.unpaid !== 0}
-              />
+              {this.handlePickerOnLeave()}
             </Picker>
           </View>
           <Text style={styles.textSubTitle}>Sisa Cuti</Text>
-          <View style={styles.viewTextSmall}>
-            <View>
-              <Text style={styles.textSmall}>Tahunan</Text>
-              <Text style={styles.textSmall}>Cuti Sakit</Text>
-              <Text style={styles.textSmall}>Cuti Alasan Penting</Text>
-              <Text style={styles.textSmall}>Cuti Besar</Text>
-              <Text style={styles.textSmall}>Cuti Melahirkan</Text>
-              <Text style={styles.textSmall}>Cuti di Luar Tanggungan</Text>
-            </View>
-            <View>
-              <Text style={styles.textSmall}>{employee?.Leaves?.annual}</Text>
-              <Text style={styles.textSmall}>{employee?.Leaves?.sick}</Text>
-              <Text style={styles.textSmall}>{employee?.Leaves?.urgent}</Text>
-              <Text style={styles.textSmall}>{employee?.Leaves?.holiday}</Text>
-              <Text style={styles.textSmall}>{employee?.Leaves?.maternity}</Text>
-              <Text style={styles.textSmall}>{employee?.Leaves?.unpaid}</Text>
-            </View>
-          </View>
+          {this.handleOnLeaveRemain()}
           <Text style={styles.textSubTitle}>Tanggal Cuti</Text>
-          <TouchableOpacity onPress={this.showDatepicker}>
+          <TouchableOpacity onPress={() => this.showDatepicker('dateLeave')}>
             <TextInput
               style={styles.textInput}
               value={this.state.dateLeave.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+              editable={false}
+            />
+          </TouchableOpacity>
+          <Text style={styles.textSubTitle}>Akhir Cuti</Text>
+          <TouchableOpacity onPress={() => this.showDatepicker('endDate')}>
+            <TextInput
+              style={styles.textInput}
+              value={this.state.endDate.toLocaleString('id-ID', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -311,8 +314,12 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   viewTextSmall: {
-    flexDirection: 'row',
     padding: 10,
+  },
+  viewLeaveRemain: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '50%',
   },
   viewDayLeave: {
     flexDirection: 'row',

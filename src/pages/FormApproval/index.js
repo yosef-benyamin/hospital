@@ -39,33 +39,22 @@ export default class FormApproval extends Component {
     });
   };
 
-  handleEndDate = (date, day) => {
-    let newDate = new Date(date);
-
-    newDate.setDate(newDate.getDate() + day);
-    return new Date(newDate).toLocaleString('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   handleTextLeave = onLeave => {
     switch (onLeave) {
-      case 'annual':
+      case 'Annual':
         return 'Tahunan';
-      case 'sick':
+      case 'Sick':
         return 'Cuti Sakit';
-      case 'urgent':
+      case 'Urgent':
         return 'Cuti Alasan Penting';
-      case 'holiday':
+      case 'Holiday':
         return 'Cuti Besar';
-      case 'maternity':
+      case 'Maternity':
         return 'Cuti Melahirkan';
-      case 'unpaid':
+      case 'Unpaid':
         return 'Cuti di Luar Tanggungan';
       default:
-        break;
+        return onLeave;
     }
   };
 
@@ -78,7 +67,7 @@ export default class FormApproval extends Component {
       Name,
       onLeave,
       reason,
-      NIP,
+      id,
       approval,
       Room,
       employeeKey,
@@ -108,7 +97,7 @@ export default class FormApproval extends Component {
       date,
     };
     try {
-      updateLeave(NIP, dataMerge);
+      updateLeave(id, dataMerge);
       approveLeaveEmp(employeeKey, onLeave, dayLeave, approve);
     } catch (error) {
       console.log('Error:', error);
@@ -132,6 +121,7 @@ export default class FormApproval extends Component {
                 onChangeText={reasonReject => this.setState({reasonReject})}
                 placeholder="Alasan Penolakan Cuti..."
                 placeholderTextColor={'grey'}
+                multiline
               />
             </View>
             <View style={styles.viewButton}>
@@ -179,7 +169,7 @@ export default class FormApproval extends Component {
           <Text style={styles.textNormal}>{employee.dayLeave} Hari</Text>
           <Text style={styles.textSubTitle}>Akhir Cuti</Text>
           <Text style={styles.textNormal}>
-            {this.handleEndDate(employee.date, employee.dayLeave)}
+            {this.handleDate(employee.dateEnd)}
           </Text>
           <Text style={styles.textSubTitle}>Alamat Selama Cuti</Text>
           <Text style={styles.textNormal}>{employee.address}</Text>
@@ -239,7 +229,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 12,
-    width: '100%',
+    maxWidth: '100%',
   },
   centeredView: {
     flex: 1,
