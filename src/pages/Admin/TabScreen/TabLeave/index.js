@@ -81,20 +81,20 @@ export default class TabLeave extends Component {
 
   textLeave = leave => {
     switch (leave) {
-      case 'annual':
+      case 'Annual':
         return 'Cuti Tahunan';
-      case 'sick':
+      case 'Sick':
         return 'Cuti Sakit';
-      case 'urgent':
+      case 'Urgent':
         return 'Cuti Alasan Penting';
-      case 'holiday':
+      case 'Holiday':
         return 'Cuti Besar';
-      case 'maternity':
+      case 'Maternity':
         return 'Cuti Melahirkan';
-      case 'unpaid':
+      case 'Unpaid':
         return 'Cuti di Luar Tanggungan';
       default:
-        return '-';
+        return leave;
     }
   };
 
@@ -134,7 +134,7 @@ export default class TabLeave extends Component {
               ...item,
             })
           }>
-          <View>
+          <View style={styles.viewDesc}>
             <Text style={styles.textTitle}>{item.Name}</Text>
             <Text style={styles.textTitle}>{item.Room}</Text>
             <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
@@ -312,5 +312,8 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     padding: 16,
+  },
+  viewDesc: {
+    width: '70%',
   },
 });

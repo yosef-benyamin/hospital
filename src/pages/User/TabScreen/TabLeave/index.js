@@ -94,7 +94,7 @@ export default class TabLeave extends Component {
   handleLeave = ({item}) => {
     return (
       <View style={styles.viewCard} key={item.key}>
-        <View>
+        <View style={styles.viewDesc}>
           <Text style={styles.textTitle}>{item.dayLeave} Hari</Text>
           <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
           <Text style={styles.textGrey}>{item.reason}</Text>
@@ -221,5 +221,8 @@ const styles = StyleSheet.create({
     height: '90%',
     width: '100%',
     padding: 16,
+  },
+  viewDesc: {
+    width: '70%',
   },
 });
