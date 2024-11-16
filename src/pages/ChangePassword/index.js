@@ -25,7 +25,7 @@ export default class ChangePassword extends Component {
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
     const employee = JSON.parse(jsonUser);
-    const employeeDB = await getEmployeeByID(employee.id);
+    const employeeDB = await getEmployeeByID(employee.NIP);
 
     let data = {};
     employeeDB.forEach(emp => {
