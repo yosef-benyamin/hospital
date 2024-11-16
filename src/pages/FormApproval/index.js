@@ -98,7 +98,9 @@ export default class FormApproval extends Component {
     };
     try {
       updateLeave(id, dataMerge);
-      approveLeaveEmp(employeeKey, onLeave, dayLeave, approve);
+      if (approve === 'rejected') {
+        approveLeaveEmp(employeeKey, onLeave, dayLeave, approve);
+      }
     } catch (error) {
       console.log('Error:', error);
       throw error;

@@ -14,6 +14,7 @@ import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import {MMKV} from 'react-native-mmkv';
 import {
   addLeave,
+  approveLeaveEmp,
   getEmployeeByID,
   getSpvByDept,
 } from '../../firestore/FormLeave';
@@ -98,6 +99,7 @@ export default class FormLeave extends Component {
       };
       // updateEmployeeLeave(9, '2024-10-31', 'Cuti-Tahunan');
       addLeave(dataMerge);
+      approveLeaveEmp(employeeKey, onLeave, dayLeave, 'waiting');
       this.props.navigation.goBack();
     } else {
       Alert.alert(
@@ -138,7 +140,7 @@ export default class FormLeave extends Component {
     const {employee} = this.state;
     if (employee.Leaves) {
       return Object.entries(employee?.Leaves).map(([key, val]) => (
-        <Picker.Item label={key} value={key} enabled={val > 0} />
+        <Picker.Item key={key} label={key} value={key} enabled={val > 0} />
       ));
     }
   };
@@ -149,7 +151,7 @@ export default class FormLeave extends Component {
       return (
         <View style={styles.viewTextSmall}>
           {Object.entries(employee.Leaves).map(([key, val]) => (
-            <View style={styles.viewLeaveRemain}>
+            <View key={key} style={styles.viewLeaveRemain}>
               <Text style={styles.textSmall}>{key}</Text>
               <Text style={styles.textSmall}>{val}</Text>
             </View>

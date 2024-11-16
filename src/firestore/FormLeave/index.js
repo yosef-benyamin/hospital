@@ -50,10 +50,10 @@ export async function approveLeaveEmp(employeeId, onLeave, days, approve) {
   }
   let day = 0;
 
-  if (approve === 'approved') {
+  if (approve === 'waiting') {
     day = dayRemain - days;
   } else {
-    day = dayRemain;
+    day = dayRemain + days;
   }
   const field = `Leaves.${onLeave}`;
   await updateDoc(docRef, {[field]: day});
