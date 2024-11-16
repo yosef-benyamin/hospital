@@ -111,7 +111,7 @@ export default class TabLeave extends Component {
             })
           }>
           <View>
-            <Text style={styles.textTitle}>{item.name}</Text>
+            <Text style={styles.textTitle}>{item.Name}</Text>
             <Text style={styles.textTitle}>{item.Room}</Text>
             <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
@@ -135,7 +135,7 @@ export default class TabLeave extends Component {
             })
           }>
           <View>
-            <Text style={styles.textTitle}>{item.name}</Text>
+            <Text style={styles.textTitle}>{item.Name}</Text>
             <Text style={styles.textTitle}>{item.Room}</Text>
             <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>

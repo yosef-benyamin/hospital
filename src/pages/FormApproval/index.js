@@ -75,7 +75,7 @@ export default class FormApproval extends Component {
       date,
       dayLeave,
       spv,
-      name,
+      Name,
       onLeave,
       reason,
       id,
@@ -100,7 +100,7 @@ export default class FormApproval extends Component {
       address,
       spv,
       dayLeave,
-      name,
+      Name,
       Room,
       approval: approve,
       reasonReject,
@@ -186,7 +186,7 @@ export default class FormApproval extends Component {
           <Text style={styles.textSubTitle}>
             Pejabat pemberi cuti (Kepala Ruangan)
           </Text>
-          <Text style={styles.textNormal}>{employee?.spv?.name}</Text>
+          <Text style={styles.textNormal}>{employee?.spv?.Name}</Text>
         </View>
         <View style={styles.viewWrapperButton}>
           <View style={styles.viewContentButton}>

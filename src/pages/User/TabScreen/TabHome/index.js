@@ -267,7 +267,7 @@ export default class TabHome extends Component {
       <View style={styles.viewContainer}>
         <Header />
         <View style={styles.viewGreeting}>
-          <Text style={styles.textGreeting}>Hi, {employee.name}</Text>
+          <Text style={styles.textGreeting}>Hi, {employee.Name}</Text>
           <Text style={styles.textGreeting}>{employee.Room}</Text>
         </View>
         <View style={styles.viewTopCard}>

@@ -86,10 +86,10 @@ export default class ChangeShift extends Component {
     const employees = await getEmployeeByDept(employee.Room);
     employees.forEach(emp => {
       personPicker.push({
-        label: emp.data().name,
+        label: emp.data().Name,
         value: {
           id: emp.data().id,
-          name: emp.data().name,
+          Name: emp.data().Name,
         },
       });
     });
@@ -103,7 +103,7 @@ export default class ChangeShift extends Component {
     const dataMerge = {
       employee: {
         id: employee.id,
-        name: employee.name,
+        Name: employee.Name,
       },
       Room: employee.Room,
       currentMonth,

@@ -42,7 +42,7 @@ export default class TabAccount extends Component {
           style={styles.image}
         />
         <View style={styles.wrapperText}>
-          <Text style={styles.textHugeCenter}>{employee.name}</Text>
+          <Text style={styles.textHugeCenter}>{employee.Name}</Text>
           <Text style={styles.textSmall}>{employee.Room}</Text>
         </View>
         <TouchableOpacity style={styles.btnWrapper} onPress={this.changePass}>

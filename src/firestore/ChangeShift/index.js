@@ -25,14 +25,14 @@ export async function changeShiftByID(
   yearMonth,
   shiftChange,
 ) {
-  const {name, id} = emp;
+  const {Name, id} = emp;
   const {day, shift} = field;
   const dayIndex = day - 1;
   const scheduleRef = doc(db, 'schedules', Room);
   await setDoc(
     scheduleRef,
     {
-      [yearMonth]: {[dayIndex]: {shift: {[shiftChange]: {[id]: name}}}},
+      [yearMonth]: {[dayIndex]: {shift: {[shiftChange]: {[id]: Name}}}},
     },
     {merge: true},
   );
