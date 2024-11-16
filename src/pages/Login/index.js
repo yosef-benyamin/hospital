@@ -32,7 +32,7 @@ export default class Login extends Component {
       });
       if (Object.keys(employee).length) {
         storage.set('employee', JSON.stringify(employee));
-        if (employee.Role === 'spv') {
+        if (employee.Role === 'Kepala Ruangan') {
           this.props.navigation.navigate('TabAdmin', {
             screen: 'TabHome',
             params: employee,
