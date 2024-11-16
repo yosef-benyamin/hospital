@@ -7,14 +7,7 @@ export async function resetLeave(employee) {
   // Inisialisasi Firestore dan batch
   const batch = writeBatch(db);
 
-  const data = {
-    annual: 12,
-    sick: 30,
-    urgent: 1,
-    holiday: 3,
-    maternity: 2,
-    unpaid: 1,
-  };
+  const data = await getLeaveDB();
 
   // Iterasi setiap employee untuk diupdate
 
@@ -35,6 +28,16 @@ export async function resetLeave(employee) {
     console.error('Error updating leave data:', error);
     throw error;
   }
+}
+
+async function getLeaveDB() {
+  const leavesRef = await getDocs(collection(db, 'leaves'));
+  let leaveObj = {};
+  leavesRef.forEach(leave => {
+    console.log(leave.data());
+    leaveObj[leave.data().LeaveName] = leave.data().LeaveAmt;
+  });
+  return leaveObj;
 }
 
 export const uploadMockDataToFirestore = async () => {
