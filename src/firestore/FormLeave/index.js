@@ -22,7 +22,7 @@ export async function getSpvByDept(Room) {
   const q = query(
     citiesRef,
     where('Room', '==', Room),
-    where('role', '==', 'spv'),
+    where('Role', '==', 'spv'),
   );
   const querySnapshot = await getDocs(q);
   return querySnapshot;
