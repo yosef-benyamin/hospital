@@ -45,8 +45,8 @@ export async function approveLeaveEmp(
   await updateDoc(docRef, {[field]: day});
 }
 
-export async function updatePassword(employeeId, password) {
+export async function updatePassword(employeeId, Password) {
   const docRef = doc(db, 'employees', employeeId);
   // Melakukan update ke database
-  await updateDoc(docRef, {password});
+  await updateDoc(docRef, {Password});
 }

@@ -17,16 +17,16 @@ export default class Login extends Component {
     super(props);
     this.state = {
       idno: '',
-      password: '',
+      Password: '',
     };
   }
 
   onLogin = async () => {
     const storage = new MMKV();
     let employee = {};
-    const {idno, password} = this.state;
-    if (idno !== '' && password !== '') {
-      const employees = await getEmployeeByIDPass(idno, password);
+    const {idno, Password} = this.state;
+    if (idno !== '' && Password !== '') {
+      const employees = await getEmployeeByIDPass(idno, Password);
       employees.forEach(emp => {
         employee = {...emp.data(), ...{key: emp.id}};
       });
@@ -47,7 +47,7 @@ export default class Login extends Component {
         Alert.alert('ID atau Password salah');
       }
     } else {
-      console.log('password belum ada');
+      console.log('Password belum ada');
     }
   };
 
@@ -74,7 +74,7 @@ export default class Login extends Component {
             style={styles.textLogin}
             placeholder="Password"
             placeholderTextColor="grey"
-            onChangeText={value => this.onChangeText('password', value)}
+            onChangeText={value => this.onChangeText('Password', value)}
             secureTextEntry
           />
           <ButtonLarge onPress={this.onLogin} text={'Masuk'} />

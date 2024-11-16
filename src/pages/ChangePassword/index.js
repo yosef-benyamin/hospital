@@ -42,7 +42,7 @@ export default class ChangePassword extends Component {
     const {currentPass, newPass, confirmPass} = this.state;
 
     if (currentPass && newPass && confirmPass) {
-      if (currentPass === this.state.employee.password) {
+      if (currentPass === this.state.employee.Password) {
         if (newPass === confirmPass) {
           updatePassword(this.state.employeeKey, newPass);
           Alert.alert('Berhasil', 'Password berhasil diganti');
@@ -50,7 +50,7 @@ export default class ChangePassword extends Component {
         } else {
           Alert.alert(
             'Perhatian',
-            'Password Baru dan konfirmasi password harus sama',
+            'Password Baru dan konfirmasi Password harus sama',
           );
         }
       } else {

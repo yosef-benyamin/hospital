@@ -6,7 +6,7 @@ export async function getEmployeeByIDPass(id, pass) {
   const q = query(
     citiesRef,
     where('id', '==', id),
-    where('password', '==', pass),
+    where('Password', '==', pass),
   );
   const querySnapshot = await getDocs(q);
   return querySnapshot;
