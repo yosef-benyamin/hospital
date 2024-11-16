@@ -17,11 +17,11 @@ export async function getEmployeeByID(id) {
   return querySnapshot;
 }
 
-export async function getSpvByDept(department) {
+export async function getSpvByDept(Room) {
   const citiesRef = collection(db, 'employees');
   const q = query(
     citiesRef,
-    where('department', '==', department),
+    where('Room', '==', Room),
     where('role', '==', 'spv'),
   );
   const querySnapshot = await getDocs(q);

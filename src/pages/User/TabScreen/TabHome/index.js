@@ -74,8 +74,8 @@ export default class TabHome extends Component {
   };
 
   initApi = async (employee, currentMonth, nextMonth) => {
-    const schedules = await getSchedules(employee.department, currentMonth);
-    const schedulesNext = await getSchedules(employee.department, nextMonth);
+    const schedules = await getSchedules(employee.Room, currentMonth);
+    const schedulesNext = await getSchedules(employee.Room, nextMonth);
     if (schedules) {
       this.setState({schedules});
     }
@@ -268,7 +268,7 @@ export default class TabHome extends Component {
         <Header />
         <View style={styles.viewGreeting}>
           <Text style={styles.textGreeting}>Hi, {employee.name}</Text>
-          <Text style={styles.textGreeting}>{employee.department}</Text>
+          <Text style={styles.textGreeting}>{employee.Room}</Text>
         </View>
         <View style={styles.viewTopCard}>
           <View>

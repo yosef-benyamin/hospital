@@ -32,7 +32,7 @@ export default class TabLeave extends Component {
   initApi = async employee => {
     const leavesWaiting = [];
     const leavesNotWaiting = [];
-    const querySnapshot = await getLeavesByRoom(employee.department);
+    const querySnapshot = await getLeavesByRoom(employee.Room);
     querySnapshot.forEach(doc => {
       if (doc.data().approval === 'waiting') {
         leavesWaiting.push({...doc.data(), key: doc.id});
@@ -112,7 +112,7 @@ export default class TabLeave extends Component {
           }>
           <View>
             <Text style={styles.textTitle}>{item.name}</Text>
-            <Text style={styles.textTitle}>{item.department}</Text>
+            <Text style={styles.textTitle}>{item.Room}</Text>
             <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
           </View>
@@ -136,7 +136,7 @@ export default class TabLeave extends Component {
           }>
           <View>
             <Text style={styles.textTitle}>{item.name}</Text>
-            <Text style={styles.textTitle}>{item.department}</Text>
+            <Text style={styles.textTitle}>{item.Room}</Text>
             <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
             {item.approval === 'rejected' && (

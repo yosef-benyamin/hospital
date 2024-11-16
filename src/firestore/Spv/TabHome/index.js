@@ -9,10 +9,10 @@ import {
 } from 'firebase/firestore';
 import {db} from '../../../config/firebaseInit';
 
-export async function generateMonthlySchedule(departmentId, month, year) {
-  // Ambil data karyawan dari Firestore berdasarkan department
+export async function generateMonthlySchedule(RoomId, month, year) {
+  // Ambil data karyawan dari Firestore berdasarkan Room
   const employeesRef = collection(db, 'employees');
-  const q = query(employeesRef, where('department', '==', departmentId));
+  const q = query(employeesRef, where('Room', '==', RoomId));
   const employeesSnapshot = await getDocs(q);
   const employees = employeesSnapshot.docs.map(emp => ({
     id: emp.id,
@@ -77,15 +77,15 @@ export async function generateMonthlySchedule(departmentId, month, year) {
   return schedule;
 }
 
-export async function saveScheduleToDB(schedule, departmentId, month, year) {
-  const scheduleRef = doc(db, 'schedules', departmentId);
+export async function saveScheduleToDB(schedule, RoomId, month, year) {
+  const scheduleRef = doc(db, 'schedules', RoomId);
   const date = `${year}-${month}`;
   await setDoc(scheduleRef, {[date]: schedule}, {merge: true});
 }
 
-export async function getSchedules(department, date) {
+export async function getSchedules(Room, date) {
   try {
-    const docRef = doc(db, 'schedules', department);
+    const docRef = doc(db, 'schedules', Room);
 
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {

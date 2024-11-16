@@ -67,7 +67,7 @@ export default class ChangeShift extends Component {
   initApi = async () => {
     const {currentMonth, employee} = this.state;
     const schedulePicker = [{label: 'Silakan pilih', value: ''}];
-    const schedules = await getSchedules(employee.department, currentMonth);
+    const schedules = await getSchedules(employee.Room, currentMonth);
     Object.values(schedules).forEach(item =>
       Object.entries(item.shift).forEach(([key, val]) => {
         if (JSON.stringify(val).includes(this.state.employee.id)) {
@@ -83,7 +83,7 @@ export default class ChangeShift extends Component {
     );
 
     const personPicker = [{label: 'Silakan pilih', value: ''}];
-    const employees = await getEmployeeByDept(employee.department);
+    const employees = await getEmployeeByDept(employee.Room);
     employees.forEach(emp => {
       personPicker.push({
         label: emp.data().name,
@@ -105,7 +105,7 @@ export default class ChangeShift extends Component {
         id: employee.id,
         name: employee.name,
       },
-      department: employee.department,
+      Room: employee.Room,
       currentMonth,
       scheduleValue,
       shift,

@@ -80,7 +80,7 @@ export default class FormApproval extends Component {
       reason,
       id,
       approval,
-      department,
+      Room,
       employeeKey,
     } = this.state.employee;
 
@@ -101,7 +101,7 @@ export default class FormApproval extends Component {
       spv,
       dayLeave,
       name,
-      department,
+      Room,
       approval: approve,
       reasonReject,
       employeeKey,

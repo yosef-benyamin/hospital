@@ -34,7 +34,7 @@ export default class ApproveChangeShift extends Component {
 
   initApi = async employee => {
     const shift = [];
-    const querySnapshot = await getChangeShift(employee.department);
+    const querySnapshot = await getChangeShift(employee.Room);
     querySnapshot.forEach(doc => {
       shift.push({...doc.data(), key: doc.id});
     });
@@ -67,7 +67,7 @@ export default class ApproveChangeShift extends Component {
   handleApprove = item => {
     const {
       employee,
-      department,
+      Room,
       currentMonth,
       scheduleValue,
       shift,
@@ -75,7 +75,7 @@ export default class ApproveChangeShift extends Component {
     } = item;
     const dataMerge = {
       employee,
-      department,
+      Room,
       currentMonth,
       scheduleValue,
       shift,
@@ -90,7 +90,7 @@ export default class ApproveChangeShift extends Component {
           updateChangeShift(item.key, dataMerge);
           changeShiftByID(
             employee,
-            department,
+            Room,
             scheduleValue,
             currentMonth,
             shift,

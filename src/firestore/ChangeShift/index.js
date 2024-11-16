@@ -11,16 +11,16 @@ import {
 } from 'firebase/firestore';
 import {db} from '../../config/firebaseInit';
 
-export async function getEmployeeByDept(department) {
+export async function getEmployeeByDept(Room) {
   const citiesRef = collection(db, 'employees');
-  const q = query(citiesRef, where('department', '==', department));
+  const q = query(citiesRef, where('Room', '==', Room));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
 export async function changeShiftByID(
   emp,
-  department,
+  Room,
   field,
   yearMonth,
   shiftChange,
@@ -28,7 +28,7 @@ export async function changeShiftByID(
   const {name, id} = emp;
   const {day, shift} = field;
   const dayIndex = day - 1;
-  const scheduleRef = doc(db, 'schedules', department);
+  const scheduleRef = doc(db, 'schedules', Room);
   await setDoc(
     scheduleRef,
     {
@@ -41,9 +41,9 @@ export async function changeShiftByID(
   });
 }
 
-export async function getChangeShift(department) {
+export async function getChangeShift(Room) {
   const citiesRef = collection(db, 'changeShift');
-  const q = query(citiesRef, where('department', '==', department));
+  const q = query(citiesRef, where('Room', '==', Room));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }

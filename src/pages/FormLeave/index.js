@@ -52,7 +52,7 @@ export default class FormLeave extends Component {
     });
 
     const spvPicker = [{label: 'Silakan pilih', value: ''}];
-    const employees = await getSpvByDept(employee.department);
+    const employees = await getSpvByDept(employee.Room);
     employees.forEach(emp => {
       spvPicker.push({
         label: emp.data().name,
@@ -87,7 +87,7 @@ export default class FormLeave extends Component {
         spv,
         dayLeave,
         name: employee.name,
-        department: employee.department,
+        Room: employee.Room,
         approval: 'waiting',
         employeeKey,
         date,

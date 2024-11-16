@@ -151,7 +151,7 @@ export default class Home extends Component {
     this.setState({filter});
   };
 
-  handleDepartment = () => {
+  handleRoom = () => {
     const {filter} = this.state;
     return (
       <View>
@@ -194,7 +194,7 @@ export default class Home extends Component {
         </View>
         <View style={styles.viewWrapper}>
           {this.handleRenderContent()}
-          {this.handleDepartment()}
+          {this.handleRoom()}
           <ScrollView
             style={styles.viewWrapperContent}
             showsVerticalScrollIndicator={false}>
