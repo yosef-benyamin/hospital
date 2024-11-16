@@ -6,14 +6,13 @@ import {getFirestore} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyDKVzYsPcg6qFx0kH9QAYksDcYeHWp3HIQ',
-  authDomain: 'hospital-2f80b.firebaseapp.com',
-  projectId: 'hospital-2f80b',
-  storageBucket: 'hospital-2f80b.appspot.com',
-  messagingSenderId: '871759794553',
-  appId: '1:871759794553:web:de574ea4be58ae50755fa8',
-  databaseURL:
-    'https://hospital-2f80b-default-rtdb.asia-southeast1.firebasedatabase.app',
+  apiKey: 'AIzaSyBoFvevgNcIJYRCFqr0EBYgEZ5nUsjM_Zc',
+  authDomain: 'hospitalproject-83059.firebaseapp.com',
+  projectId: 'hospitalproject-83059',
+  storageBucket: 'hospitalproject-83059.firebasestorage.app',
+  messagingSenderId: '555175416646',
+  appId: '1:555175416646:web:048f8f82df52423bc58b47',
+  measurementId: 'G-XEJ8VZHK5L',
 };
 
 // Initialize Firebase
