@@ -23,7 +23,7 @@ export async function resetLeave(employee) {
 
     // Menambahkan operasi update ke batch
     batch.update(employeeRef, {
-      leave: data,
+      Leaves: data,
     });
   });
 

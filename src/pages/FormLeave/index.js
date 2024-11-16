@@ -48,7 +48,7 @@ export default class FormLeave extends Component {
     this.setState({
       employee: data.data(),
       employeeKey: data.id,
-      dayLeaveRemain: data.data().leave?.annual,
+      dayLeaveRemain: data.data().Leaves?.annual,
     });
 
     const spvPicker = [{label: 'Silakan pilih', value: ''}];
@@ -142,34 +142,34 @@ export default class FormLeave extends Component {
               onValueChange={itemValue =>
                 this.setState({
                   onLeave: itemValue,
-                  dayLeaveRemain: employee?.leave[itemValue],
+                  dayLeaveRemain: employee?.Leaves[itemValue],
                 })
               }>
               <Picker.Item
                 label="Tahunan"
                 value="annual"
-                enabled={employee?.leave?.annual !== 0}
+                enabled={employee?.Leaves?.annual !== 0}
               />
               <Picker.Item label="Cuti Sakit" value="sick" />
               <Picker.Item
                 label="Cuti Alasan Penting"
                 value="urgent"
-                enabled={employee?.leave?.urgent !== 0}
+                enabled={employee?.Leaves?.urgent !== 0}
               />
               <Picker.Item
                 label="Cuti Besar"
                 value="holiday"
-                enabled={employee?.leave?.holiday !== 0}
+                enabled={employee?.Leaves?.holiday !== 0}
               />
               <Picker.Item
                 label="Cuti Melahirkan"
                 value="maternity"
-                enabled={employee?.leave?.maternity !== 0}
+                enabled={employee?.Leaves?.maternity !== 0}
               />
               <Picker.Item
                 label="Cuti di Luar Tanggungan"
                 value="unpaid"
-                enabled={employee?.leave?.unpaid !== 0}
+                enabled={employee?.Leaves?.unpaid !== 0}
               />
             </Picker>
           </View>
@@ -184,12 +184,12 @@ export default class FormLeave extends Component {
               <Text style={styles.textSmall}>Cuti di Luar Tanggungan</Text>
             </View>
             <View>
-              <Text style={styles.textSmall}>{employee?.leave?.annual}</Text>
-              <Text style={styles.textSmall}>{employee?.leave?.sick}</Text>
-              <Text style={styles.textSmall}>{employee?.leave?.urgent}</Text>
-              <Text style={styles.textSmall}>{employee?.leave?.holiday}</Text>
-              <Text style={styles.textSmall}>{employee?.leave?.maternity}</Text>
-              <Text style={styles.textSmall}>{employee?.leave?.unpaid}</Text>
+              <Text style={styles.textSmall}>{employee?.Leaves?.annual}</Text>
+              <Text style={styles.textSmall}>{employee?.Leaves?.sick}</Text>
+              <Text style={styles.textSmall}>{employee?.Leaves?.urgent}</Text>
+              <Text style={styles.textSmall}>{employee?.Leaves?.holiday}</Text>
+              <Text style={styles.textSmall}>{employee?.Leaves?.maternity}</Text>
+              <Text style={styles.textSmall}>{employee?.Leaves?.unpaid}</Text>
             </View>
           </View>
           <Text style={styles.textSubTitle}>Tanggal Cuti</Text>

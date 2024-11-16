@@ -41,7 +41,7 @@ export async function approveLeaveEmp(
     day = dayRemain;
   }
   const docRef = doc(db, 'employees', employeeId);
-  const field = `leave.${onLeave}`;
+  const field = `Leaves.${onLeave}`;
   await updateDoc(docRef, {[field]: day});
 }
 

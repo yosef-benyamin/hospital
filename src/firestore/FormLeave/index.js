@@ -44,7 +44,7 @@ export async function approveLeaveEmp(employeeId, onLeave, days, approve) {
 
   let dayRemain = 0;
   if (employeeSnap.exists()) {
-    dayRemain = Number(employeeSnap.data().leave[onLeave]);
+    dayRemain = Number(employeeSnap.data().Leaves[onLeave]);
   } else {
     console.log('No such document!');
   }
@@ -55,6 +55,6 @@ export async function approveLeaveEmp(employeeId, onLeave, days, approve) {
   } else {
     day = dayRemain;
   }
-  const field = `leave.${onLeave}`;
+  const field = `Leaves.${onLeave}`;
   await updateDoc(docRef, {[field]: day});
 }
