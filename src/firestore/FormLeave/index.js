@@ -29,12 +29,12 @@ export async function getSpvByDept(Room) {
 }
 
 export async function addLeave(dataLeave) {
-  const docRef = await addDoc(collection(db, 'leaves'), dataLeave);
+  const docRef = await addDoc(collection(db, 'leaveshistory'), dataLeave);
   return docRef;
 }
 
 export async function updateLeave(id, dataLeave) {
-  const docRef = doc(db, 'leaves', id);
+  const docRef = doc(db, 'leaveshistory', id);
   await updateDoc(docRef, dataLeave);
 }
 
