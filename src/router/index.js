@@ -11,6 +11,7 @@ import FormApproval from '../pages/FormApproval';
 import ChangePassword from '../pages/ChangePassword';
 import ChangeShift from '../pages/ChangeShift';
 import ApproveChangeShift from '../pages/ApproveChangeShift';
+import DetailSchedule from '../pages/DetailSchedule';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +67,11 @@ const Router = () => {
       <Stack.Screen
         name="ApproveChangeShift"
         component={ApproveChangeShift}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="DetailSchedule"
+        component={DetailSchedule}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

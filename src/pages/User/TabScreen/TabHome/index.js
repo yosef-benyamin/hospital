@@ -14,6 +14,7 @@ import {Header} from '../../../../component/Header';
 import {FlashList} from '@shopify/flash-list';
 import {MMKV} from 'react-native-mmkv';
 import {getSchedules} from '../../../../firestore/Spv/TabHome';
+import {handleDate} from '../../../../utils';
 
 export default class TabHome extends Component {
   constructor(props) {
@@ -84,15 +85,6 @@ export default class TabHome extends Component {
     }
   };
 
-  handleDate = date => {
-    return new Date(date).toLocaleString('id-ID', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   handleCurrentDateTime = () => {
     const currentDate = new Date().toLocaleString('id-ID', {
       weekday: 'long',
@@ -106,7 +98,7 @@ export default class TabHome extends Component {
 
   handleAllSchedules = ({item}) => {
     const {filter, tab, currentMonth, nextMonth} = this.state;
-    const [key, val] = item;
+    const [, val] = item;
     const date = tab === 3 ? nextMonth : currentMonth;
     return Object.entries(val.shift)
       .filter(([shift]) => shift === filter.toLowerCase() || filter === 'Semua')
@@ -124,7 +116,7 @@ export default class TabHome extends Component {
             </View>
             <View>
               <Text style={styles.textDate}>
-                {this.handleDate(`${date}-${String(val.day).padStart(2, '0')}`)}
+                {handleDate(`${date}-${String(val.day).padStart(2, '0')}`)}
               </Text>
               <Text style={styles.textDate}>{shift}</Text>
             </View>
@@ -135,31 +127,29 @@ export default class TabHome extends Component {
 
   handleMySchedule = ({item}) => {
     const {filter, employee, currentMonth} = this.state;
-    const [key, val] = item;
+    const [, val] = item;
     return Object.entries(val.shift)
       .filter(([shift]) => shift === filter.toLowerCase() || filter === 'Semua')
       .map(([shift, value]) => {
         if (Object.keys(value).some(NIP => NIP === employee.NIP)) {
           return (
-            <View style={styles.btnContent} key={`${val.day}${shift}`}>
-              <View>
-                {Object.entries(value).map(([id, name]) => {
-                  return (
-                    <Text style={styles.textName} key={id}>
-                      {name}
-                    </Text>
-                  );
-                })}
-              </View>
-              <View>
-                <Text style={styles.textDate}>
-                  {this.handleDate(
-                    `${currentMonth}-${String(val.day).padStart(2, '0')}`,
-                  )}
-                </Text>
-                <Text style={styles.textDate}>{shift}</Text>
-              </View>
-            </View>
+            <TouchableOpacity
+              style={styles.btnMySchedule}
+              key={`${val.day}${shift}`}
+              onPress={() =>
+                this.props.navigation.navigate('DetailSchedule', {
+                  value,
+                  date: `${currentMonth}-${String(val.day).padStart(2, '0')}`,
+                  shift,
+                })
+              }>
+              <Text style={styles.textDate}>
+                {handleDate(
+                  `${currentMonth}-${String(val.day).padStart(2, '0')}`,
+                )}
+              </Text>
+              <SmallCard text={shift} color={'green'} />
+            </TouchableOpacity>
           );
         }
       });
@@ -382,6 +372,12 @@ const styles = StyleSheet.create({
     height: '83%',
   },
   btnContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 18,
+  },
+  btnMySchedule: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
