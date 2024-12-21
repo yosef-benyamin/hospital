@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {COLOR_BLUE, COLOR_RED} from '../Constant';
+import {COLOR_GREEN_PRIMARY, COLOR_RED} from '../Constant';
 
 export class SmallCard extends Component {
   handleColor() {
@@ -11,9 +11,9 @@ export class SmallCard extends Component {
         viewInnerCard = [viewInnerCard, styles.borderRed];
         textCardBold = [textCardBold, styles.colorRed];
         break;
-      case 'blue':
-        viewInnerCard = [viewInnerCard, styles.borderBlue];
-        textCardBold = [textCardBold, styles.colorBlue];
+      case 'green':
+        viewInnerCard = [viewInnerCard, styles.borderGreen];
+        textCardBold = [textCardBold, styles.colorGreen];
         break;
       default:
         break;
@@ -38,11 +38,11 @@ const styles = StyleSheet.create({
   colorRed: {
     color: COLOR_RED,
   },
-  borderBlue: {
-    borderColor: COLOR_BLUE,
+  borderGreen: {
+    borderColor: COLOR_GREEN_PRIMARY,
   },
-  colorBlue: {
-    color: COLOR_BLUE,
+  colorGreen: {
+    color: COLOR_GREEN_PRIMARY,
   },
   viewInnerCard: {
     borderRadius: 12,

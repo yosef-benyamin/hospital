@@ -108,7 +108,7 @@ export default class Home extends Component {
                       );
                     })}
                   </View>
-                  {tab === 2 && <SmallCard text={key} color="blue" />}
+                  {tab === 2 && <SmallCard text={key} color="green" />}
                 </View>
               );
             });

@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {COLOR_BLUE} from '../Constant';
+import {COLOR_GREEN_PRIMARY} from '../Constant';
 
 export const ButtonSmall = ({onPress, active, text}) => (
   <TouchableOpacity style={styles.btnStyle} onPress={onPress}>
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   buttonActive: {
-    backgroundColor: COLOR_BLUE,
+    backgroundColor: COLOR_GREEN_PRIMARY,
     color: '#FFFFFF',
     width: 100,
     textAlign: 'center',
@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     padding: 2,
     fontWeight: '500',
-    borderColor: COLOR_BLUE,
+    borderColor: COLOR_GREEN_PRIMARY,
     borderWidth: 1.5,
   },
   buttonNonActive: {
     backgroundColor: '#FFFFFF',
-    color: COLOR_BLUE,
-    borderColor: COLOR_BLUE,
+    color: COLOR_GREEN_PRIMARY,
+    borderColor: COLOR_GREEN_PRIMARY,
     borderWidth: 1.5,
   },
 });

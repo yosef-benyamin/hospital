@@ -4,7 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import TabHome from './TabHome';
 import TabLeave from './TabLeave';
 import TabAccount from './TabAccount';
-import {COLOR_BLUE} from '../../../component/Constant';
+import {COLOR_GREEN_PRIMARY} from '../../../component/Constant';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +13,7 @@ export function TabScreen() {
     <Tab.Navigator
       initialRouteName="TabHome"
       screenOptions={{
-        tabBarActiveTintColor: COLOR_BLUE,
+        tabBarActiveTintColor: COLOR_GREEN_PRIMARY,
       }}>
       <Tab.Screen
         name="TabHome"

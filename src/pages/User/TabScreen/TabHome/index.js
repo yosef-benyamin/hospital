@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import SmallCard from '../../../../component/SmallCard';
 import {ButtonSmall} from '../../../../component/ButtonSmall';
-import {COLOR_BLUE} from '../../../../component/Constant';
+import {COLOR_GREEEN_PRIMARY} from '../../../../component/Constant';
 import {Header} from '../../../../component/Header';
 import {FlashList} from '@shopify/flash-list';
 import {MMKV} from 'react-native-mmkv';
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textDate: {
-    color: COLOR_BLUE,
+    color: COLOR_GREEEN_PRIMARY,
     fontWeight: 'bold',
     textAlign: 'right',
     textTransform: 'capitalize',

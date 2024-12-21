@@ -65,14 +65,8 @@ export default class ApproveChangeShift extends Component {
   };
 
   handleApprove = item => {
-    const {
-      employee,
-      Room,
-      currentMonth,
-      scheduleValue,
-      shift,
-      personValue,
-    } = item;
+    const {employee, Room, currentMonth, scheduleValue, shift, personValue} =
+      item;
     const dataMerge = {
       employee,
       Room,
@@ -88,13 +82,7 @@ export default class ApproveChangeShift extends Component {
         text: 'OK',
         onPress: () => {
           updateChangeShift(item.key, dataMerge);
-          changeShiftByID(
-            employee,
-            Room,
-            scheduleValue,
-            currentMonth,
-            shift,
-          );
+          changeShiftByID(employee, Room, scheduleValue, currentMonth, shift);
           this.props.navigation.goBack();
         },
       },
@@ -126,7 +114,7 @@ export default class ApproveChangeShift extends Component {
           </View>
           <SmallCard
             text={item.approve ? 'Disetujui ' : 'Setuju'}
-            color={!item.approve && 'blue'}
+            color={!item.approve && 'green'}
           />
         </TouchableOpacity>
       );

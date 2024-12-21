@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {COLOR_BLUE} from '../Constant';
+import {COLOR_GREEN_PRIMARY} from '../Constant';
 
 export const ButtonLarge = ({onPress, text, styleButton}) => (
   <TouchableOpacity
@@ -12,7 +12,7 @@ export const ButtonLarge = ({onPress, text, styleButton}) => (
 
 const styles = StyleSheet.create({
   buttonLanding: {
-    backgroundColor: COLOR_BLUE,
+    backgroundColor: COLOR_GREEN_PRIMARY,
     padding: 6,
     borderRadius: 10,
     width: '100%',

@@ -116,7 +116,7 @@ export default class TabLeave extends Component {
             <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
           </View>
-          <SmallCard text={'Lihat'} color={'blue'} />
+          <SmallCard text={'Lihat'} color={'green'} />
         </TouchableOpacity>
       );
     }

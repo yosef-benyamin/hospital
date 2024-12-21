@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import SmallCard from '../../../../component/SmallCard';
 import {ButtonSmall} from '../../../../component/ButtonSmall';
-import {COLOR_BLUE} from '../../../../component/Constant';
+import {COLOR_GREEN_PRIMARY} from '../../../../component/Constant';
 import {Header} from '../../../../component/Header';
 import ButtonLarge from '../../../../component/ButtonLarge';
 import {FlashList} from '@shopify/flash-list';
@@ -236,7 +236,7 @@ export default class TabHome extends Component {
           <Text style={styles.textHugeCenter}>Jadwal Belum dibuat</Text>
         </View>
         <TouchableOpacity onPress={this.generateSchedule}>
-          <Text style={styles.textBlue}>Buat otomatis</Text>
+          <Text style={styles.textGreen}>Buat otomatis</Text>
         </TouchableOpacity>
       </View>
     );
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textDate: {
-    color: COLOR_BLUE,
+    color: COLOR_GREEN_PRIMARY,
     fontWeight: 'bold',
     textAlign: 'right',
     textTransform: 'capitalize',
@@ -505,8 +505,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-  textBlue: {
-    color: COLOR_BLUE,
+  textGreen: {
+    color: COLOR_GREEN_PRIMARY,
     textAlign: 'center',
   },
   textHugeCenter: {

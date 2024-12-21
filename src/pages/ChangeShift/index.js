@@ -12,7 +12,7 @@ import {Picker} from '@react-native-picker/picker';
 import {MMKV} from 'react-native-mmkv';
 import {getSchedules} from '../../firestore/Spv/TabHome';
 import {getEmployeeByID} from '../../firestore/FormLeave';
-import {COLOR_BLUE} from '../../component/Constant';
+import {COLOR_GREEN_PRIMARY} from '../../component/Constant';
 import {addChangeShift, getEmployeeByDept} from '../../firestore/ChangeShift';
 
 export default class ChangeShift extends Component {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     borderRadius: 12,
-    backgroundColor: COLOR_BLUE,
+    backgroundColor: COLOR_GREEN_PRIMARY,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 6,

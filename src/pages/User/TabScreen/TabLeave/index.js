@@ -12,6 +12,7 @@ import {
 import {
   COLOR_BLUE,
   COLOR_GREEN,
+  COLOR_GREEN_PRIMARY,
   COLOR_RED,
 } from '../../../../component/Constant';
 import {MMKV} from 'react-native-mmkv';
@@ -64,7 +65,7 @@ export default class TabLeave extends Component {
         </View>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('FormLeave')}>
-          <Text style={styles.textBlue}>Ajukan sekarang</Text>
+          <Text style={styles.textGreen}>Ajukan sekarang</Text>
         </TouchableOpacity>
       </ScrollView>
     );
@@ -165,8 +166,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
-  textBlue: {
-    color: COLOR_BLUE,
+  textGreen: {
+    color: COLOR_GREEN_PRIMARY,
     textAlign: 'center',
   },
   image: {
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   fab: {
-    backgroundColor: COLOR_BLUE,
+    backgroundColor: COLOR_GREEN_PRIMARY,
     width: 48,
     height: 48,
     borderRadius: 24,
