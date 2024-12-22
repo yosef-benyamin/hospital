@@ -216,7 +216,7 @@ export default class FormLeave extends Component {
             onChangeText={value => this.onChangeText('reason', value)}
           />
           <View style={styles.viewDayLeave}>
-            <Text style={styles.textSubTitle}>Lama Cuti (Hari)</Text>
+            <Text style={styles.textSubTitle}>Lama Cuti</Text>
             <TouchableOpacity
               style={styles.smallBtn}
               onPress={() =>
@@ -237,6 +237,8 @@ export default class FormLeave extends Component {
               }>
               <Text style={styles.textBlack}>+</Text>
             </TouchableOpacity>
+            <Text style={styles.textSubTitle}>Hari</Text>
+            <View style={styles.viewEmptyFill} />
           </View>
           <Text style={styles.textSubTitle}>Alamat Selama Cuti</Text>
           <TextInput
@@ -328,6 +330,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 16,
     justifyContent: 'space-between',
+  },
+  viewEmptyFill: {
+    width: '40%',
   },
   textBlack: {
     color: 'black',
