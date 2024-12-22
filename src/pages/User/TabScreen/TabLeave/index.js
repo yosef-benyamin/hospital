@@ -60,12 +60,12 @@ export default class TabLeave extends Component {
           style={styles.image}
         />
         <View style={styles.wrapperText}>
-          <Text style={styles.textHugeCenter}>Kamu belum pernah</Text>
-          <Text style={styles.textHugeCenter}>mengajukan cuti</Text>
+          <Text style={styles.textHugeCenter}>Belum ada data</Text>
+          <Text style={styles.textHugeCenter}>pengajuan cuti</Text>
         </View>
         <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('FormLeave')}>
-          <Text style={styles.textGreen}>Ajukan sekarang</Text>
+          onPress={() => this.props.navigation.navigate('DocumentLeave')}>
+          <Text style={styles.textGreen}>Peraturan cuti</Text>
         </TouchableOpacity>
       </ScrollView>
     );
@@ -112,6 +112,12 @@ export default class TabLeave extends Component {
     return (
       <>
         <View style={styles.viewFlashList}>
+          {this.state.leaves.length !== 0 && (
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('DocumentLeave')}>
+              <Text style={styles.textGreen}>Peraturan cuti</Text>
+            </TouchableOpacity>
+          )}
           <FlashList
             data={this.state.leaves}
             renderItem={this.handleLeave}
@@ -124,7 +130,7 @@ export default class TabLeave extends Component {
         <TouchableOpacity
           style={styles.fab}
           onPress={() => this.props.navigation.navigate('FormLeave')}>
-          <Text style={styles.white}>+</Text>
+          <Text style={styles.white}>Ajukan Cuti</Text>
         </TouchableOpacity>
       </>
     );
@@ -203,17 +209,16 @@ const styles = StyleSheet.create({
   },
   white: {
     color: 'white',
+    fontWeight: 'bold',
   },
   fab: {
     backgroundColor: COLOR_GREEN_PRIMARY,
-    width: 48,
-    height: 48,
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
     top: '90%',
-    left: '80%',
+    padding: 12,
   },
   textGrey: {
     color: 'grey',
