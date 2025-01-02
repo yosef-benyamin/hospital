@@ -8,10 +8,11 @@ import {COLOR_GREEN_PRIMARY} from '../../../component/Constant';
 
 const Tab = createBottomTabNavigator();
 
-export function TabScreen() {
+export function TabScreen(props) {
+  const tabScreen = props.route.params?.tabScreen ?? 'TabHome';
   return (
     <Tab.Navigator
-      initialRouteName="TabHome"
+      initialRouteName={tabScreen}
       screenOptions={{
         tabBarActiveTintColor: COLOR_GREEN_PRIMARY,
       }}>

@@ -100,7 +100,7 @@ export default class FormLeave extends Component {
       // updateEmployeeLeave(9, '2024-10-31', 'Cuti-Tahunan');
       addLeave(dataMerge);
       approveLeaveEmp(employeeKey, onLeave, dayLeave, 'waiting');
-      this.props.navigation.goBack();
+      this.props.navigation.replace('TabScreen', {tabScreen: 'TabLeave'});
     } else {
       Alert.alert(
         'Perhatian',
