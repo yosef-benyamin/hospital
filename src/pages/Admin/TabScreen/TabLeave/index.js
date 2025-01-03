@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   viewFlashList: {
-    height: '100%',
+    height: '85%',
     width: '100%',
     padding: 16,
   },

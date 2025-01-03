@@ -4,6 +4,7 @@ import {ButtonLarge} from '../../component/ButtonLarge';
 import {COLOR_RED} from '../../component/Constant';
 import {ModalConfirm} from '../../component/ModalConfirm';
 import {approveLeaveEmp, updateLeave} from '../../firestore/FormLeave';
+import {getCountLeave} from '../../firestore/Login';
 
 export default class FormApproval extends Component {
   constructor(props) {
@@ -58,7 +59,7 @@ export default class FormApproval extends Component {
     }
   };
 
-  handleModalPositive = approve => {
+  handleModalPositive = async approve => {
     const {
       address,
       date,
@@ -105,7 +106,11 @@ export default class FormApproval extends Component {
       console.log('Error:', error);
       throw error;
     }
-    this.props.navigation.goBack();
+    const countBadge = await getCountLeave(Room);
+    this.props.navigation.replace('TabAdmin', {
+      tabScreen: 'TabLeave',
+      countBadge,
+    });
   };
 
   handleModalReject = () => {

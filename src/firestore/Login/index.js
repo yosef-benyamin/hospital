@@ -11,3 +11,15 @@ export async function getEmployeeByIDPass(NIP, pass) {
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
+
+export async function getCountLeave(room) {
+  const leavesRef = collection(db, 'leaveshistory');
+  const q = query(
+    leavesRef,
+    where('approval', '==', 'waiting'),
+    where('Room', '==', room),
+  );
+
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.size;
+}

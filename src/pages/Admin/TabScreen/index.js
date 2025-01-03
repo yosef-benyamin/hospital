@@ -8,10 +8,12 @@ import {COLOR_GREEN_PRIMARY} from '../../../component/Constant';
 
 const Tab = createBottomTabNavigator();
 
-export function TabAdmin() {
+export function TabAdmin(props) {
+  const tabScreen = props.route.params?.tabScreen ?? 'TabHome';
+  const countBadge = props.route.params?.countBadge;
   return (
     <Tab.Navigator
-      initialRouteName="TabHome"
+      initialRouteName={tabScreen}
       screenOptions={{
         tabBarActiveTintColor: COLOR_GREEN_PRIMARY,
       }}>
@@ -32,6 +34,7 @@ export function TabAdmin() {
         options={{
           headerShown: false,
           tabBarLabel: 'Cuti',
+          tabBarBadge: countBadge,
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="pencil" color={color} size={size} />
           ),

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {MMKV} from 'react-native-mmkv';
-import {getEmployeeByIDPass} from '../../firestore/Login';
+import {getCountLeave, getEmployeeByIDPass} from '../../firestore/Login';
 
 export default class Login extends Component {
   constructor(props) {
@@ -33,9 +33,11 @@ export default class Login extends Component {
       if (Object.keys(employee).length) {
         storage.set('employee', JSON.stringify(employee));
         if (employee.Role === 'Kepala Ruangan') {
+          const countBadge = await getCountLeave(employee.Room);
           this.props.navigation.navigate('TabAdmin', {
             screen: 'TabHome',
             params: employee,
+            countBadge,
           });
         } else {
           this.props.navigation.navigate('TabScreen', {
