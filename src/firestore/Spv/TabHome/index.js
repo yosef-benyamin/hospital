@@ -65,7 +65,11 @@ export async function generateMonthlySchedule(RoomId, month, year) {
     randomEmployees.forEach((employee, index) => {
       // Ganti shift setiap 2 hari
       const shiftIndex = (day + Math.floor(index / 2)) % shifts.length;
-      const shift = shifts[shiftIndex];
+      let shift = shifts[shiftIndex];
+
+      if (employee.Role === 'Kepala Ruangan') {
+        shift = shifts[0];
+      }
 
       // Tambahkan employee.NIP ke dalam shift yang sesuai
       daySchedule.shift[shift][employee.NIP] = employee.Name;
