@@ -13,6 +13,7 @@ import {ButtonLarge} from '../../component/ButtonLarge';
 import {getSchedules} from '../../firestore/Spv/TabHome';
 import {ButtonSmall} from '../../component/ButtonSmall';
 import {getRoom} from '../../firestore/Home';
+import {getShift} from '../../utils';
 
 export default class Home extends Component {
   constructor(props) {
@@ -27,9 +28,9 @@ export default class Home extends Component {
   }
 
   componentDidMount = async () => {
-    // Pagi: 00.00 - 08.00
-    // Siang: 08.00 - 16.00
-    // Malam: 16.00 - 00.00
+    // Pagi: 07.30 - 14.00
+    // Siang: 14.00 - 21.00
+    // Malam: 21.00 - 07.30
 
     const rooms = await getRoom();
     this.initApi(rooms[0]);
@@ -38,19 +39,7 @@ export default class Home extends Component {
     this.setState({rooms, filter: rooms[0]});
     setInterval(() => {
       this.handleCurrentDateTime();
-      const now = new Date();
-
-      const currentHour = now.getHours();
-      let shift;
-
-      if (currentHour >= 0 && currentHour < 8) {
-        shift = 'Pagi';
-      } else if (currentHour >= 8 && currentHour < 16) {
-        shift = 'Siang';
-      } else {
-        shift = 'Malam';
-      }
-      this.setState({shift});
+      this.setState({shift: getShift()});
     }, 1000);
   };
 

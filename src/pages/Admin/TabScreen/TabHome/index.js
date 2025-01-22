@@ -19,7 +19,7 @@ import {
   getSchedules,
   saveScheduleToDB,
 } from '../../../../firestore/Spv/TabHome';
-import {handleDate} from '../../../../utils';
+import {getShift, handleDate} from '../../../../utils';
 
 export default class TabHome extends Component {
   constructor(props) {
@@ -64,19 +64,7 @@ export default class TabHome extends Component {
 
     setInterval(() => {
       this.handleCurrentDateTime();
-      const now = new Date();
-
-      const currentHour = now.getHours();
-      let shift;
-
-      if (currentHour >= 0 && currentHour < 8) {
-        shift = 'Pagi';
-      } else if (currentHour >= 8 && currentHour < 16) {
-        shift = 'Siang';
-      } else {
-        shift = 'Malam';
-      }
-      this.setState({shift});
+      this.setState({shift: getShift()});
     }, 1000);
   };
 
