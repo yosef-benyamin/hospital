@@ -64,7 +64,7 @@ export default class LandingPage extends Component {
             RUMAH SAKIT UMUM DAERAH HAMBA BATANGHARI
           </Text>
           <ButtonLarge onPress={this.handleLogin} text={'Login'} />
-          <ButtonLarge onPress={this.handleHome} text={'Beranda'} />
+          {/* <ButtonLarge onPress={this.handleHome} text={'Beranda'} /> */}
           {/* <ButtonLarge onPress={this.handleMock} text={'Mocking Data'} /> */}
           {/* <ButtonLarge onPress={this.handleBackup} text={'Backup to console'} /> */}
         </View>
