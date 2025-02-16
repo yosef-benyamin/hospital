@@ -225,6 +225,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
     padding: 30,
+    fontSize: 20,
   },
   viewContent: {
     width: '90%',
