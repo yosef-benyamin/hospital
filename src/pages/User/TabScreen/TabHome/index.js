@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import SmallCard from '../../../../component/SmallCard';
 import {ButtonSmall} from '../../../../component/ButtonSmall';
-import {COLOR_GREEEN_PRIMARY} from '../../../../component/Constant';
+import {COLOR_GREEN_PRIMARY} from '../../../../component/Constant';
 import {Header} from '../../../../component/Header';
 import {FlashList} from '@shopify/flash-list';
 import {MMKV} from 'react-native-mmkv';
@@ -80,7 +80,7 @@ export default class TabHome extends Component {
       month: 'long',
       day: 'numeric',
     });
-    const currentTime = new Date().toLocaleTimeString('id-ID');
+    const currentTime = new Date().toLocaleTimeString('en-US', {hour12: false});
     this.setState({currentDate, currentTime});
   };
 
@@ -265,17 +265,17 @@ export default class TabHome extends Component {
                 onPress={() => this.handleButtonFilter('Semua')}
               />
               <ButtonSmall
-                text={'Pagi'}
+                text={'Pagi \n 7.30 - 14.00'}
                 active={filter === 'Pagi'}
                 onPress={() => this.handleButtonFilter('Pagi')}
               />
               <ButtonSmall
-                text={'Siang'}
+                text={'Siang \n 14.00 - 21.00'}
                 active={filter === 'Siang'}
                 onPress={() => this.handleButtonFilter('Siang')}
               />
               <ButtonSmall
-                text={'Malam'}
+                text={'Malam \n 21.00 - 7.30'}
                 active={filter === 'Malam'}
                 onPress={() => this.handleButtonFilter('Malam')}
               />
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textDate: {
-    color: COLOR_GREEEN_PRIMARY,
+    color: COLOR_GREEN_PRIMARY,
     fontWeight: 'bold',
     textAlign: 'right',
     textTransform: 'capitalize',
