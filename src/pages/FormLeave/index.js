@@ -185,7 +185,7 @@ export default class FormLeave extends Component {
           </View>
           <Text style={styles.textSubTitle}>Sisa Cuti</Text>
           {this.handleOnLeaveRemain()}
-          <Text style={styles.textSubTitle}>Tanggal Cuti</Text>
+          <Text style={styles.textSubTitle}>Tanggal Mulai</Text>
           <TouchableOpacity onPress={() => this.showDatepicker('dateLeave')}>
             <TextInput
               style={styles.textInput}
@@ -197,7 +197,7 @@ export default class FormLeave extends Component {
               editable={false}
             />
           </TouchableOpacity>
-          <Text style={styles.textSubTitle}>Akhir Cuti</Text>
+          <Text style={styles.textSubTitle}>Tanggal Akhir</Text>
           <TouchableOpacity onPress={() => this.showDatepicker('endDate')}>
             <TextInput
               style={styles.textInput}
@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
     padding: 30,
+    fontSize: 20,
   },
   viewContent: {
     width: '90%',

@@ -166,7 +166,7 @@ export default class FormApproval extends Component {
           <Text style={styles.textNormal}>
             {this.handleTextLeave(employee.onLeave)}
           </Text>
-          <Text style={styles.textSubTitle}>Tanggal Cuti</Text>
+          <Text style={styles.textSubTitle}>Tanggal Mulai</Text>
           <Text style={styles.textNormal}>
             {this.handleDate(employee.date)}
           </Text>
@@ -174,7 +174,7 @@ export default class FormApproval extends Component {
           <Text style={styles.textNormal}>{employee.reason}</Text>
           <Text style={styles.textSubTitle}>Lama Cuti</Text>
           <Text style={styles.textNormal}>{employee.dayLeave} Hari</Text>
-          <Text style={styles.textSubTitle}>Akhir Cuti</Text>
+          <Text style={styles.textSubTitle}>Tanggal Akhir</Text>
           <Text style={styles.textNormal}>
             {this.handleDate(employee.dateEnd)}
           </Text>
@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
     padding: 30,
+    fontSize: 20,
   },
   viewContent: {
     width: '90%',
