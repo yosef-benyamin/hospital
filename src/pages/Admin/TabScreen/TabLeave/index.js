@@ -99,6 +99,12 @@ export default class TabLeave extends Component {
   };
 
   handleWaiting = ({item}) => {
+    let date = '';
+    if (item.date === item.dateEnd) {
+      date = this.handleDate(item.dateEnd);
+    } else {
+      date = `${+item.date.slice(8, 10)} - ${this.handleDate(item.dateEnd)}`;
+    }
     if (item.approval === 'waiting') {
       return (
         <TouchableOpacity
@@ -113,7 +119,7 @@ export default class TabLeave extends Component {
           <View>
             <Text style={styles.textTitle}>{item.Name}</Text>
             <Text style={styles.textTitle}>{item.Room}</Text>
-            <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
+            <Text style={styles.textGrey}>{date}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
           </View>
           <SmallCard text={'Lihat'} color={'green'} />
@@ -123,6 +129,12 @@ export default class TabLeave extends Component {
   };
 
   handleLeave = ({item}) => {
+    let date = '';
+    if (item.date === item.dateEnd) {
+      date = this.handleDate(item.dateEnd);
+    } else {
+      date = `${+item.date.slice(8, 10)} - ${this.handleDate(item.dateEnd)}`;
+    }
     if (item.approval !== 'waiting') {
       return (
         <TouchableOpacity
@@ -137,7 +149,7 @@ export default class TabLeave extends Component {
           <View style={styles.viewDesc}>
             <Text style={styles.textTitle}>{item.Name}</Text>
             <Text style={styles.textTitle}>{item.Room}</Text>
-            <Text style={styles.textGrey}>{this.handleDate(item.date)}</Text>
+            <Text style={styles.textGrey}>{date}</Text>
             <Text style={styles.textGrey}>{this.textLeave(item.onLeave)}</Text>
             {item.approval === 'rejected' && (
               <Text style={styles.red}>{item.reasonReject}</Text>
