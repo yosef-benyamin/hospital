@@ -139,7 +139,6 @@ export default class TabLeave extends Component {
   render() {
     return (
       <View style={styles.viewContainer}>
-        <Text style={styles.textTitleBold}>Cuti</Text>
         {this.handleRenderData()}
         {this.handleRenderNoData()}
       </View>

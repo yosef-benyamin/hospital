@@ -221,7 +221,6 @@ export default class TabLeave extends Component {
   render() {
     return (
       <View style={styles.viewContainer}>
-        <Text style={styles.textTitleBold}>Cuti</Text>
         {this.handleRenderContent()}
         {this.handleRenderData()}
       </View>
@@ -292,10 +291,10 @@ const styles = StyleSheet.create({
   viewContent: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
+    width: '90%',
     borderRadius: 16,
     backgroundColor: '#F2F2F7',
-    marginBottom: 16,
+    marginVertical: 16,
     padding: 4,
   },
   btnTab: {

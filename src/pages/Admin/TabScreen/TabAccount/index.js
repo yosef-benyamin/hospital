@@ -64,7 +64,6 @@ export default class TabAccount extends Component {
   render() {
     return (
       <View style={styles.viewContainer}>
-        <Text style={styles.textTitleBold}>Akun</Text>
         {this.handleRender()}
         <ModalConfirm
           visible={this.state.showModal}
@@ -88,6 +87,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    marginTop: 20,
   },
   wrapperText: {
     padding: 14,

@@ -10,12 +10,10 @@ import {
 import SmallCard from '../../../../component/SmallCard';
 import {ButtonSmall} from '../../../../component/ButtonSmall';
 import {COLOR_GREEN_PRIMARY} from '../../../../component/Constant';
-import {Header} from '../../../../component/Header';
 import {FlashList} from '@shopify/flash-list';
 import {MMKV} from 'react-native-mmkv';
 import {getSchedules} from '../../../../firestore/Spv/TabHome';
-import {getShift, handleDate} from '../../../../utils';
-
+import {handleDate} from '../../../../utils';
 export default class TabHome extends Component {
   constructor(props) {
     super(props);
@@ -24,9 +22,6 @@ export default class TabHome extends Component {
       filter: 'Semua',
       schedules: {},
       employee: {},
-      shift: 'Malam',
-      currentDate: '',
-      currentTime: '',
       schedulesNext: {},
       currentMonth: '',
       nextMonth: '',
@@ -53,13 +48,6 @@ export default class TabHome extends Component {
     this.setState({employee, currentMonth, nextMonth});
 
     this.initApi(employee, currentMonth, nextMonth);
-
-    this.handleCurrentDateTime();
-
-    setInterval(() => {
-      this.handleCurrentDateTime();
-      this.setState({shift: getShift()});
-    }, 1000);
   };
 
   initApi = async (employee, currentMonth, nextMonth) => {
@@ -71,17 +59,6 @@ export default class TabHome extends Component {
     if (schedulesNext) {
       this.setState({schedulesNext});
     }
-  };
-
-  handleCurrentDateTime = () => {
-    const currentDate = new Date().toLocaleString('id-ID', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-    const currentTime = new Date().toLocaleTimeString('en-US', {hour12: false});
-    this.setState({currentDate, currentTime});
   };
 
   handleAllSchedules = ({item}) => {
@@ -240,21 +217,9 @@ export default class TabHome extends Component {
   };
 
   render() {
-    const {employee, currentDate, currentTime, shift, filter} = this.state;
+    const {filter} = this.state;
     return (
       <View style={styles.viewContainer}>
-        <Header />
-        <View style={styles.viewGreeting}>
-          <Text style={styles.textGreeting}>Hi, {employee.Name}</Text>
-          <Text style={styles.textGreeting}>{employee.Room}</Text>
-        </View>
-        <View style={styles.viewTopCard}>
-          <View>
-            <Text style={styles.textCardBold}>{currentDate}</Text>
-            <Text style={styles.textCurrentDate}>{currentTime}</Text>
-          </View>
-          <SmallCard text={shift} color={'black'} />
-        </View>
         <View style={styles.viewWrapper}>
           {this.handleRenderContent()}
           <View style={styles.viewFilter}>
@@ -293,28 +258,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-  },
-  viewGreeting: {
-    width: '90%',
-    marginVertical: 10,
-  },
-  textGreeting: {
-    fontWeight: '500',
-    color: '#000000',
-    fontSize: 16,
-  },
-  viewTopCard: {
-    flexDirection: 'row',
-    width: '90%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FE',
-    borderRadius: 16,
-    padding: 16,
-  },
-  textCardBold: {
-    fontWeight: 'bold',
-    color: '#000000',
   },
   viewContent: {
     flexDirection: 'row',
@@ -402,8 +345,5 @@ const styles = StyleSheet.create({
   viewFlashList: {
     height: '100%',
     width: '100%',
-  },
-  textCurrentDate: {
-    color: 'grey',
   },
 });
