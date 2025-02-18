@@ -13,7 +13,7 @@ import {MMKV} from 'react-native-mmkv';
 import {getSchedules} from '../../firestore/Spv/TabHome';
 import {getEmployeeByID} from '../../firestore/FormLeave';
 import {COLOR_GREEN_PRIMARY} from '../../component/Constant';
-import {addChangeShift, getEmployeeByDept} from '../../firestore/ChangeShift';
+import {addChangeShift} from '../../firestore/ChangeShift';
 
 export default class ChangeShift extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ export default class ChangeShift extends Component {
       employeeKey: '',
       schedulePicker: [],
       scheduleValue: {},
-      shift: 'pagi',
+      shift: '',
       personPicker: [],
       personValue: '',
       currentMonth: '',
@@ -57,9 +57,8 @@ export default class ChangeShift extends Component {
 
   handleDate = date => {
     return new Date(date).toLocaleString('id-ID', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
     });
   };
@@ -68,8 +67,20 @@ export default class ChangeShift extends Component {
     const {currentMonth, employee} = this.state;
     const schedulePicker = [{label: 'Silakan pilih', value: ''}];
     const schedules = await getSchedules(employee.Room, currentMonth);
+    const personPicker = [{label: 'Silakan pilih', value: ''}];
     Object.values(schedules).forEach(item =>
       Object.entries(item.shift).forEach(([key, val]) => {
+        Object.entries(val).forEach(([id, name]) => {
+          personPicker.push({
+            label:
+              this.handleDate(`${currentMonth}-${item.day}`) +
+              ` - ${key} - ${name}`,
+            value: {
+              NIP: id,
+              Name: name,
+            },
+          });
+        });
         if (JSON.stringify(val).includes(this.state.employee.NIP)) {
           schedulePicker.push({
             label: this.handleDate(`${currentMonth}-${item.day}`) + ` - ${key}`,
@@ -81,18 +92,6 @@ export default class ChangeShift extends Component {
         }
       }),
     );
-
-    const personPicker = [{label: 'Silakan pilih', value: ''}];
-    const employees = await getEmployeeByDept(employee.Room);
-    employees.forEach(emp => {
-      personPicker.push({
-        label: emp.data().Name,
-        value: {
-          NIP: emp.data().NIP,
-          Name: emp.data().Name,
-        },
-      });
-    });
 
     this.setState({schedulePicker, personPicker});
   };
@@ -111,7 +110,7 @@ export default class ChangeShift extends Component {
       shift,
       personValue,
     };
-    if (this.state.personValue && this.state.scheduleValue) {
+    if (personValue && scheduleValue && shift) {
       Alert.alert('Perhatian', 'Yakin ingin mengubah jadwal?', [
         {text: 'Cancel', onPress: () => console.log('cancel')},
         {
@@ -153,6 +152,13 @@ export default class ChangeShift extends Component {
     }
   };
 
+  handleDisabled = itemValue => {
+    this.setState({scheduleValue: itemValue});
+    if (itemValue.shift === this.state.shift) {
+      this.setState({shift: ''});
+    }
+  };
+
   render() {
     console.log('scheduleValue', this.state.scheduleValue);
     return (
@@ -166,14 +172,13 @@ export default class ChangeShift extends Component {
             <Picker
               selectedValue={this.state.scheduleValue}
               style={styles.picker}
-              onValueChange={itemValue =>
-                this.setState({scheduleValue: itemValue})
-              }>
+              onValueChange={itemValue => this.handleDisabled(itemValue)}>
               {this.handlePicker()}
             </Picker>
           </View>
           <Text style={styles.textSubTitle}>Perubahan Jadwal</Text>
           <TouchableOpacity
+            disabled={this.state?.scheduleValue?.shift === 'pagi'}
             style={this.handleStyleRadio('pagi')[0]}
             onPress={() => this.setState({shift: 'pagi'})}>
             <View style={this.handleStyleRadio('pagi')[1]}>
@@ -182,6 +187,7 @@ export default class ChangeShift extends Component {
             <Text style={styles.textBlack}>Pagi</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            disabled={this.state?.scheduleValue?.shift === 'siang'}
             style={this.handleStyleRadio('siang')[0]}
             onPress={() => this.setState({shift: 'siang'})}>
             <View style={this.handleStyleRadio('siang')[1]}>
@@ -190,6 +196,7 @@ export default class ChangeShift extends Component {
             <Text style={styles.textBlack}>Siang</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            disabled={this.state?.scheduleValue?.shift === 'malam'}
             style={this.handleStyleRadio('malam')[0]}
             onPress={() => this.setState({shift: 'malam'})}>
             <View style={this.handleStyleRadio('malam')[1]}>
