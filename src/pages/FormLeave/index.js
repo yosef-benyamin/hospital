@@ -15,6 +15,7 @@ import {MMKV} from 'react-native-mmkv';
 import {
   addLeave,
   approveLeaveEmp,
+  getDataLeave,
   getEmployeeByID,
   getSpvByDept,
 } from '../../firestore/FormLeave';
@@ -23,7 +24,7 @@ export default class FormLeave extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      onLeave: 'Annual',
+      onLeave: '',
       dateLeave: new Date(),
       endDate: new Date(),
       reason: '',
@@ -38,6 +39,7 @@ export default class FormLeave extends Component {
   }
 
   componentDidMount = async () => {
+    const dataLeave = await getDataLeave();
     const storage = new MMKV();
     const jsonUser = storage.getString('employee');
     const employee = JSON.parse(jsonUser);
@@ -45,12 +47,6 @@ export default class FormLeave extends Component {
     let data = {};
     employeeDB.forEach(emp => {
       data = emp;
-    });
-
-    this.setState({
-      employee: data.data(),
-      employeeKey: data.id,
-      dayLeaveRemain: data.data().Leaves?.annual,
     });
 
     const spvPicker = [{label: 'Silakan pilih', value: ''}];
@@ -64,7 +60,14 @@ export default class FormLeave extends Component {
         },
       });
     });
-    this.setState({spvPicker});
+
+    this.setState({
+      employee: data.data(),
+      employeeKey: data.id,
+      dayLeaveRemain: data.data().Leaves?.annual,
+      dataLeave,
+      spvPicker,
+    });
   };
 
   handleSubmit = () => {
@@ -137,10 +140,15 @@ export default class FormLeave extends Component {
   };
 
   handlePickerOnLeave = () => {
-    const {employee} = this.state;
-    if (employee.Leaves) {
-      return Object.entries(employee?.Leaves).map(([key, val]) => (
-        <Picker.Item key={key} label={key} value={key} enabled={val > 0} />
+    const {dataLeave, employee} = this.state;
+    if (dataLeave) {
+      return dataLeave.map(leave => (
+        <Picker.Item
+          key={leave.LeaveName}
+          label={leave.LeaveName}
+          value={leave.LeaveName}
+          enabled={employee?.Leaves?.[leave.LeaveName] > 0 || false}
+        />
       ));
     }
   };

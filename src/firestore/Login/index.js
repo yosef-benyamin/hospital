@@ -1,4 +1,11 @@
-import {collection, getDocs, query, where} from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import {db} from '../../config/firebaseInit';
 
 export async function getEmployeeByIDPass(NIP, pass) {
@@ -22,4 +29,10 @@ export async function getCountLeave(room) {
 
   const querySnapshot = await getDocs(q);
   return querySnapshot.size;
+}
+
+export async function updateLeaveNewEmp(employeeId, Leaves) {
+  const docRef = doc(db, 'employess', employeeId);
+  // Melakukan update ke database
+  await updateDoc(docRef, {Leaves});
 }

@@ -10,6 +10,15 @@ import {
 } from 'firebase/firestore';
 import {db} from '../../config/firebaseInit';
 
+export async function getDataLeave() {
+  const leavesRef = await getDocs(collection(db, 'leaves'));
+  const leaves = leavesRef.docs.map(leave => ({
+    id: leave.id,
+    ...leave.data(),
+  }));
+  return leaves;
+}
+
 export async function getEmployeeByID(NIP) {
   const citiesRef = collection(db, 'employess');
   const q = query(citiesRef, where('NIP', '==', NIP));

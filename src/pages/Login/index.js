@@ -10,7 +10,12 @@ import {
 } from 'react-native';
 import {ButtonLarge} from '../../component/ButtonLarge';
 import {MMKV} from 'react-native-mmkv';
-import {getCountLeave, getEmployeeByIDPass} from '../../firestore/Login';
+import {
+  getCountLeave,
+  getEmployeeByIDPass,
+  updateLeaveNewEmp,
+} from '../../firestore/Login';
+import {getLeaveDB} from '../../firestore/LandingPage';
 
 export default class Login extends Component {
   constructor(props) {
@@ -25,6 +30,7 @@ export default class Login extends Component {
     const storage = new MMKV();
     let employee = {};
     const {idno, Password} = this.state;
+    const leaves = await getLeaveDB();
     if (idno !== '' && Password !== '') {
       const employees = await getEmployeeByIDPass(idno, Password);
       employees.forEach(emp => {
@@ -32,6 +38,9 @@ export default class Login extends Component {
       });
       if (Object.keys(employee).length) {
         storage.set('employee', JSON.stringify(employee));
+        if (!employee.Leaves) {
+          await updateLeaveNewEmp(employee.key, leaves);
+        }
         if (employee.Role === 'Kepala Ruangan') {
           const countBadge = await getCountLeave(employee.Room);
           this.props.navigation.navigate('TabAdmin', {

@@ -137,12 +137,7 @@ export default class TabLeave extends Component {
   };
 
   render() {
-    return (
-      <View style={styles.viewContainer}>
-        {this.handleRenderData()}
-        {this.handleRenderNoData()}
-      </View>
-    );
+    return <View style={styles.viewContainer}>{this.handleRenderData()}</View>;
   }
 }
 
@@ -224,7 +219,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   viewFlashList: {
-    height: '90%',
+    height: '100%',
     width: '100%',
     padding: 16,
   },

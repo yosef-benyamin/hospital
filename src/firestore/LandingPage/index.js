@@ -30,7 +30,7 @@ export async function resetLeave(employee) {
   }
 }
 
-async function getLeaveDB() {
+export async function getLeaveDB() {
   const leavesRef = await getDocs(collection(db, 'leaves'));
   let leaveObj = {};
   leavesRef.forEach(leave => {
