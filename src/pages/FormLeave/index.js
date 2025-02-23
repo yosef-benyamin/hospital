@@ -85,6 +85,7 @@ export default class FormLeave extends Component {
 
     const date = dateLeave.toLocaleDateString('en-CA');
     const dateEnd = endDate.toLocaleDateString('en-CA');
+    const dateSubmit = new Intl.DateTimeFormat('en-CA').format(new Date());
 
     if (reason && address && spv) {
       const dataMerge = {
@@ -99,6 +100,7 @@ export default class FormLeave extends Component {
         employeeKey,
         date,
         dateEnd,
+        dateSubmit,
       };
       // updateEmployeeLeave(9, '2024-10-31', 'Cuti-Tahunan');
       addLeave(dataMerge);

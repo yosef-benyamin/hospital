@@ -99,6 +99,7 @@ export default class ChangeShift extends Component {
   handleSubmit = () => {
     const {employee, scheduleValue, currentMonth, shift, personValue} =
       this.state;
+    const dateSubmit = new Intl.DateTimeFormat('en-CA').format(new Date());
     const dataMerge = {
       employee: {
         NIP: employee.NIP,
@@ -109,6 +110,7 @@ export default class ChangeShift extends Component {
       scheduleValue,
       shift,
       personValue,
+      dateSubmit,
     };
     if (personValue && scheduleValue && shift) {
       Alert.alert('Perhatian', 'Yakin ingin mengubah jadwal?', [
