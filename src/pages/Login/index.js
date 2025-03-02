@@ -38,7 +38,7 @@ export default class Login extends Component {
       });
       if (Object.keys(employee).length) {
         storage.set('employee', JSON.stringify(employee));
-        if (!employee.Leaves) {
+        if (!(employee.Leaves && Object.keys(employee.Leaves).length)) {
           await updateLeaveNewEmp(employee.key, leaves);
         }
         if (employee.Role === 'Kepala Ruangan') {
